@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>角色列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="/static/lib/layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="/static/css/index.css" media="all"/>
+    <link rel="stylesheet" href="/static/css/public.css" media="all"/>
+    <link rel="stylesheet" href="/static/css/list.css" media="all"/>
+</head>
+<body>
+    <div class="childrenBody">
+        <div class="layui-card">
+            <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">角色</label>
+                        <div class="layui-input-block">
+                            <select name="roleId">
+                                <option value="">--全部--</option>
+                                <option th:each="role:${roleList}" th:value="${role.roleId}" th:text="${role.roleName}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn" lay-submit="" lay-filter="submit-search">
+                            <i class="arley-icon arley-icon-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="layui-card-body">
+                <div class="layui-card-operate">
+                    <button class="layui-btn layui-btn-active" data-type="add"><i class="arley-icon arley-icon-add"></i> 添加</button>
+                </div>
+
+                <table class="layui-hide" id="tableId" lay-filter="tableFilter"></table>
+
+                <!-- 状态显示 -->
+                <script type="text/html" id="roleStateId">
+                    <span class="td-status layui-btn layui-btn-xs {{ d.roleState == 1 ? 'layui-btn-green' : 'layui-btn-disabled' }}">{{ d.roleState == 1 ? '开启' : '关闭' }}</span>
+                </script>
+
+                <script type="text/html" id="operateId">
+                    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="arley-icon arley-icon-edit"></i>编辑</a>
+                    <a class="layui-btn  layui-btn-xs {{ d.userName == 'admin' ? 'layui-btn-disabled' : 'layui-btn-danger' }} " lay-event="del"><i class="arley-icon arley-icon-delete"></i>删除</a>
+                </script>
+            </div>
+        </div>
+    </div>
+
+<script type="text/javascript" src="/static/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="/static/lib/layui/layui.js"></script>
+<script type="text/javascript" src="/static/js/common.js"></script>
+<script>
+
+    var url = "/role/listRoleByPage.do";
+    var cols = [
+        [
+            {type:'checkbox'},
+            {field:'roleId', title:'ID', align:'center', sort: true},
+            {field:'roleName', title:'角色名称', align:'center'},
+            {field:'remark', title:'备注', align:'center'},
+            {field:'roleState', title:'状态', toolbar:'#roleStateId', align:'center'},
+            {field:'modifier', title:'修改者', align:'center'},
+            {field:'right', title:'操作',toolbar: '#operateId', align:'center'}
+        ]
+    ];
+
+var tableIns;
+     layui.use(['form','layer','table'],function(){
+         var form = layui.form,
+             //$ = layui.jquery,
+             table = layui.table;
+
+         tableIns = initTable(url, cols, table, form);
+
+         //监听表格操作
+         table.on('tool(tableFilter)', function(obj){
+             var data = obj.data;
+             var event = obj.event
+             if ('edit' === event) {
+                 layer_show("修改角色", "/role/toRoleEdit.do?roleId=" + data.roleId, '500', '700')
+             } else if ('del' === event) {
+                 layer.confirm('确认要删除吗？',function(index){
+                     $.ajax({
+                         url:'/role/deleteRole.do',
+                         data:{roleId:data.roleId},
+                         dataType: 'json',
+                         success:function (data) {
+                             var code = data.resultCode;
+                             var desc = data.resultDesc;
+                             if ("0000" === code) {
+                                 layer.msg('删除成功!', {icon: 1});
+                                 tableIns.reload("reloadTable");
+                             } else {
+                                 layer.msg(desc,{icon: 2,time:1000});
+                             }
+                         }
+                     })
+                 });
+             }
+         });
+
+         // 绑定事件
+         var active = {
+             add:function () {
+                 layer_show("添加角色", "/role/toRoleAdd.do", '500', '700')
+             }
+         };
+         $('.layui-btn-active').on('click', function(){
+             var type = $(this).data('type');
+             active[type] ? active[type].call(this) : '';
+         });
+
+
+     })
+
+
+
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+	"cmsName": "CMS后台管理",
+	"version": "v1.0",
+	"author": "Arley",
+	"homePage": "index.html",
+	"server": "windows",
+	"dataBase": "8.00.2039",
+	"maxUpload": "10M",
+	"userRights": "超级管理员"
+}
