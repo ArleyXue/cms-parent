@@ -87,7 +87,6 @@ layui.use(['form','element','layer','jquery'],function(){
         $(".userAll span").text(data.count);
     })
 //外部图标链接
-    var iconUrl = "https://at.alicdn.com/t/font_798105_acfylgoi7xe.css";
     //外部图标
     $.get(iconUrl,function(data){
         $(".outIcons span").text(data.split(".arley-icon-").length-1);

@@ -59,12 +59,9 @@
                     data:data.field,//这是是要提交的参数
                     dataType:'json',
                     success:function(data){
-                        console.log(data)
                         if(data.resultCode === "0000"){
-                            //layer.close(index);
                             location.href="/index.do";
                         }else{
-                            //layer.close(index);
                             layer.msg(data.resultDesc,{icon: 2});
                             $("#submit").text("登录");
                         }

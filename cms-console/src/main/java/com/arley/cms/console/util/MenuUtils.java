@@ -1,7 +1,7 @@
 package com.arley.cms.console.util;
 
+import com.arley.cms.console.pojo.vo.SysPermissionVO;
 import com.arley.cms.console.pojo.vo.XTreeVO;
-import com.arley.cms.console.pojo.Do.SysPermissionDO;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -14,7 +14,7 @@ import java.util.Set;
  * @author chen
  * @date 2018-01-02 17:54
  */
-public class MenuUtil {
+public class MenuUtils {
 
 
     /**
@@ -23,15 +23,15 @@ public class MenuUtil {
      * @param roleMenus   角色对应菜单
      * @return
      */
-    public static Set<XTreeVO> makeXTreeList(List<SysPermissionDO> originMenus, List<SysPermissionDO> roleMenus){
+    public static Set<XTreeVO> makeXTreeList(List<SysPermissionVO> originMenus, List<SysPermissionVO> roleMenus){
         Set<XTreeVO> trees = new LinkedHashSet <>();
         boolean checked;
         boolean disabled;
-        for(SysPermissionDO sysPermission : originMenus){
+        for(SysPermissionVO sysPermission : originMenus){
             checked = false;
             disabled = sysPermission.getMenuState() != 1;
             if (roleMenus != null && roleMenus.size() > 0) {
-                for(SysPermissionDO roleSysPermission : roleMenus){
+                for(SysPermissionVO roleSysPermission : roleMenus){
                     if(sysPermission.getPermissionId().equals(roleSysPermission.getPermissionId())){
                         checked = true;
                         break;

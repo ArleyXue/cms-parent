@@ -1,6 +1,6 @@
 package com.arley.cms.console.controller;
 
-import com.arley.cms.console.constant.CodeEnum;
+import com.arley.cms.console.constant.PublicCodeEnum;
 import com.arley.cms.console.exception.CustomException;
 import com.arley.cms.console.pojo.Do.LoginLogDO;
 import com.arley.cms.console.pojo.Do.SysUserDO;
@@ -69,12 +69,12 @@ public class UserController {
             loginLog.setContent("登录成功!");
             loginLogService.save(loginLog);
         } catch (UnknownAccountException e) {
-            throw new CustomException(CodeEnum.FILE.getCode(), "账号不存在!");
+            throw new CustomException(PublicCodeEnum.FILE.getCode(), "账号不存在!");
         } catch (DisabledAccountException e) {
-            throw new CustomException(CodeEnum.FILE.getCode(), "账号被禁用,请联系管理员!");
+            throw new CustomException(PublicCodeEnum.FILE.getCode(), "账号被禁用,请联系管理员!");
         } catch (AuthenticationException e) {
-            throw new CustomException(CodeEnum.FILE.getCode(), "账号或密码错误!");
+            throw new CustomException(PublicCodeEnum.FILE.getCode(), "账号或密码错误!");
         }
-        return AnswerBody.getInstance();
+        return AnswerBody.buildAnswerBody();
     }
 }

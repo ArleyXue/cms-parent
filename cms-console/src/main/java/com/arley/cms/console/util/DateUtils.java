@@ -14,7 +14,7 @@ import java.time.temporal.TemporalAccessor;
  * @Description: JAVA 1.8 时间工具类
  * @date 2018/8/20 22:24
  */
-public class DateUtil {
+public class DateUtils {
 
     // 缺省的日期时间显示格式: yyyy-MM-dd HH:mm:ss
     public static final String DATE_PATTERN = "yyyy-MM-dd HH:mm:ss";

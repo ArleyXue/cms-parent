@@ -1,8 +1,5 @@
 package com.arley.cms.console.pojo.vo;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 /**
  * @author XueXianlei
  * @Description: 菜单VO
@@ -58,11 +55,6 @@ public class SysPermissionVO {
      * 修改人
      */
     private String modifier;
-
-    /**
-     * 子菜单
-     */
-    private List<SysPermissionVO> permissionList;
 
     public Integer getPermissionId() {
         return permissionId;
@@ -144,13 +136,7 @@ public class SysPermissionVO {
         this.modifier = modifier == null ? null : modifier.trim();
     }
 
-    public List<SysPermissionVO> getPermissionList() {
-        return permissionList;
-    }
 
-    public void setPermissionList(List<SysPermissionVO> permissionList) {
-        this.permissionList = permissionList;
-    }
 
 
 }

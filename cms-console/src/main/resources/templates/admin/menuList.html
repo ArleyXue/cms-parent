@@ -33,7 +33,7 @@
 
             <div class="layui-card-body" style="height: 100%;">
                 <div class="layui-card-operate">
-                    <button class="layui-btn layuiadmin-btn-admin"><i class="arley-icon arley-icon-add"></i> 添加</button>
+                    <button class="layui-btn layui-btn-active" data-type="add"><i class="arley-icon arley-icon-add"></i> 添加</button>
                 </div>
 
                 <table class="layui-hide" id="treeTable" lay-filter="treeTable"></table>
@@ -53,26 +53,9 @@
 
 <script type="text/javascript" src="/static/js/jquery-3.2.1.min.js"></script>
 <script type="text/javascript" src="/static/lib/layui/layui.js"></script>
+<script type="text/javascript" src="/static/js/common.js"></script>
 <script>
-
-
-
-
-
-    var url = "/role/listRoleByPage.do";
-    var cols = [
-        [
-            {type:'checkbox'},
-            {field:'roleId', title:'ID', align:'center', sort: true},
-            {field:'roleName', title:'角色名称', align:'center'},
-            {field:'remark', title:'备注', align:'center'},
-            {field:'roleState', title:'状态', toolbar:'#roleStateId', align:'center'},
-            {field:'modifier', title:'修改者', align:'center'},
-            {field:'right', title:'操作',toolbar: '#operateId', align:'center'}
-        ]
-    ];
-
-    var editObj=null,ptable=null,treeGrid=null,tableId='treeTable',layer=null;
+    var treeGrid=null,tableId='treeTable',layer=null;
     layui.config({
         base: '/static/lib/extend/treeGrid/'
     }).extend({
@@ -81,7 +64,7 @@
         var $=layui.jquery;
         treeGrid = layui.treeGrid;//很重要
         layer=layui.layer;
-        ptable=treeGrid.render({
+        treeGrid.render({
             id:tableId
             ,elem: '#'+tableId
             ,idField:'permissionId'
@@ -117,31 +100,41 @@
                     ,{field:'menuPriority',  title: '排序', align:'center'}
                     ,{title: '操作', align:'center'/*toolbar: '#barDemo'*/
                         ,templet: function(d){
-                            var html='';
-                            var addBtn='<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="add"><i class="arley-icon arley-icon-add"></i>添加子菜单</a>';
-                            var delBtn='<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="del"><i class="arley-icon arley-icon-edit"></i>编辑</a>';
+                            var addBtn = '';
+                            var delBtn = '';
+                            addBtn='<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="add"><i class="arley-icon arley-icon-add"></i>添加子菜单</a>';
+                            delBtn='<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="arley-icon arley-icon-edit"></i>编辑</a>';
+                            if (d.menuType === 2) {
+                                addBtn = '';
+                            }
                             return addBtn+delBtn;
                         }
                     }
-
-
                 ]
             ]
             ,page:false
         });
 
         treeGrid.on('tool('+tableId+')',function (obj) {
-            console.log(obj)
-            if(obj.event === 'del'){//删除行
-                del(obj);
-            }else if(obj.event==="add"){//添加行
-                //add(obj);
-                layer_show_full("添加菜单", "/permission/toPermissionAdd.do")
+            var d = obj.data;
+            if(obj.event === 'edit'){//修改
+                layer_show("编辑菜单", "/permission/toPermissionEdit.do?permissionId=" + d.permissionId,  '500', '700')
+            }else if(obj.event==="add"){//添加
+                layer_show("添加菜单", "/permission/toPermissionAdd.do?parentId=" + d.permissionId,  '500', '700')
             }
         });
+
+        // 绑定事件
+        var active = {
+            add:function () {
+                layer_show("添加菜单", "/permission/toPermissionAdd.do", '500', '700')
+            }
+        };
+        $('.layui-btn-active').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
     });
-
-
 
 </script>
 

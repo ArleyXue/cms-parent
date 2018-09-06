@@ -82,8 +82,7 @@
                 var resultDesc = data.resultDesc;
                 if ("0000" === resultCode) {
                     layer.msg('修改成功!', {icon: 1});
-                    var index = parent.layer.getFrameIndex(window.name);
-                    parent.layer.close(index);
+                    layer_close();
                     parent.tableIns.reload("reloadTable");
                 } else {
                     layer.msg(resultDesc, {icon: 2});

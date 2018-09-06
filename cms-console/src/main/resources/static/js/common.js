@@ -1,3 +1,4 @@
+var iconUrl = "https://at.alicdn.com/t/font_798105_tgs9ubiap8.css";
 /**
  * layui 初始化分页表格
  * @param url
@@ -10,9 +11,9 @@ function initTable(url, cols, table, form) {
     var tableIns = table.render({
         elem: '#tableId',
         url : url,
-        page : true,
         id : "reloadTable",
-        cols : cols
+        cols : cols,
+        page : true
     });
 
 
@@ -21,6 +22,9 @@ function initTable(url, cols, table, form) {
         var field = data.field;
         //执行重载
         table.reload('reloadTable', {
+            page: {
+                curr: 1 //重新从第 1 页开始
+            },
             where: field
         });
     });
@@ -57,7 +61,7 @@ function layer_show_full(title, url){
         content: url
     });
     layer.full(index);
-    window.sessionStorage.setItem("index",index);
+    window.sessionStorage.setItem("index", index);
     //改变窗口大小时，重置弹窗的宽高，防止超出可视区域（如F12调出debug的操作）
     $(window).on("resize",function(){
         layui.layer.full(window.sessionStorage.getItem("index"));
@@ -71,4 +75,18 @@ function layer_close(){
 }
 
 
-
+function getIconData() {
+    var d = [];
+    $.ajaxSettings.async = false;
+    $.get(iconUrl, function(data){
+        var arr = data.split("\n");
+        arr.forEach(function (value) {
+            if (value.indexOf(".arley-icon-") === 0) {
+                var str = value.split(":")[0];
+                d.push(str.substring(1, str.length));
+            }
+        })
+    });
+    $.ajaxSettings.async = true;
+    return d;
+}

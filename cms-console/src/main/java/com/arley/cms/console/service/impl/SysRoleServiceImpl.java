@@ -6,7 +6,7 @@ import com.arley.cms.console.pojo.Do.SysRolePermissionDO;
 import com.arley.cms.console.pojo.query.SysRoleQuery;
 import com.arley.cms.console.pojo.vo.SysRoleVO;
 import com.arley.cms.console.service.SysRoleService;
-import com.arley.cms.console.util.DateUtil;
+import com.arley.cms.console.util.DateUtils;
 import com.arley.cms.console.util.Pagination;
 import com.arley.cms.console.util.ShiroUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -41,8 +41,8 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRoleDO> im
         SysRoleDO sysRoleDO = new SysRoleDO();
         BeanUtils.copyProperties(sysRoleVO, sysRoleDO);
         sysRoleDO.setModifier(ShiroUtils.getLoginUser().getUserName());
-        sysRoleDO.setGmtCreate(DateUtil.getLocalDateTime());
-        sysRoleDO.setGmtModified(DateUtil.getLocalDateTime());
+        sysRoleDO.setGmtCreate(DateUtils.getLocalDateTime());
+        sysRoleDO.setGmtModified(DateUtils.getLocalDateTime());
         sysRoleMapper.insert(sysRoleDO);
 
         // 保存新的权限
@@ -80,7 +80,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRoleDO> im
         sysRoleDO.setRoleName(sysRoleVO.getRoleName());
         sysRoleDO.setRemark(sysRoleVO.getRemark());
         sysRoleDO.setRoleState(sysRoleVO.getRoleState());
-        sysRoleDO.setGmtModified(DateUtil.getLocalDateTime());
+        sysRoleDO.setGmtModified(DateUtils.getLocalDateTime());
         sysRoleMapper.updateById(sysRoleDO);
 
         // 删除角色权限

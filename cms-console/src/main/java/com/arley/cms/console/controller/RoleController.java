@@ -46,7 +46,7 @@ public class RoleController {
     @ResponseBody
     public AnswerBody deleteRole(Integer roleId) {
         sysRoleService.deleteRoleById(roleId);
-        return AnswerBody.getInstance();
+        return AnswerBody.buildAnswerBody();
     }
 
     /**
@@ -59,7 +59,7 @@ public class RoleController {
     @ResponseBody
     public AnswerBody editRole(SysRoleVO sysRoleVO, String permissionIds) {
         sysRoleService.updateRole(sysRoleVO, permissionIds);
-        return AnswerBody.getInstance();
+        return AnswerBody.buildAnswerBody();
     }
 
     /**
@@ -72,7 +72,7 @@ public class RoleController {
     @ResponseBody
     public AnswerBody addRole(SysRoleVO sysRoleVO, String permissionIds) {
         sysRoleService.insertRole(sysRoleVO, permissionIds);
-        return AnswerBody.getInstance();
+        return AnswerBody.buildAnswerBody();
     }
 
     /**

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <title>添加菜单</title>
+    <title>修改菜单</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -14,44 +14,44 @@
     <link rel="stylesheet" href="/static/css/public.css" media="all"/>
 </head>
 <body class="childrenBody">
-    <form class="layui-form" action="/permission/addPermission.do" method="post">
-        <input type="hidden" id="parentId" name="parentId" th:value="${permission.permissionId}">
-        <input type="hidden" id="menuIcon" name="menuIcon" >
+    <form class="layui-form" action="/permission/editPermission.do" method="post">
+        <input type="hidden" id="permissionId" name="permissionId" th:value="${menu.permissionId}">
+        <input type="hidden" id="menuIcon" name="menuIcon" th:value="${menu.menuIcon}">
         <div class="layui-form-item">
             <label class="layui-form-label"><span class="c-red">*</span>父菜单名称</label>
             <div class="layui-input-block">
-                <input type="text" class="layui-input" readonly th:value="${permission.menuName}" lay-verify="required" placeholder="请输入父菜单名称">
+                <input type="text" class="layui-input" readonly th:value="${parentMenuName}" lay-verify="required" placeholder="请输入父菜单名称">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label"><span class="c-red">*</span>菜单名称</label>
             <div class="layui-input-block">
-                <input type="text" class="layui-input" name="menuName" lay-verify="required" placeholder="请输入菜单名称">
+                <input type="text" class="layui-input" name="menuName" th:value="${menu.menuName}" lay-verify="required" placeholder="请输入菜单名称">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label"><span class="c-red">*</span>菜单标识</label>
             <div class="layui-input-block">
-                <input type="text" class="layui-input" name="menuCode" lay-verify="required" placeholder="请输入菜单标识">
+                <input type="text" class="layui-input" name="menuCode" th:value="${menu.menuCode}" lay-verify="required" placeholder="请输入菜单标识">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label"><span class="c-red">*</span>菜单排序</label>
             <div class="layui-input-block">
-                <input type="text" class="layui-input" name="menuPriority" lay-verify="required|number" placeholder="请输入菜单排序">
+                <input type="text" class="layui-input" name="menuPriority" th:value="${menu.menuPriority}" lay-verify="required|number" placeholder="请输入菜单排序">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label"><span class="c-red">*</span>菜单类型</label>
             <div class="layui-input-block">
-                <input type="radio" name="menuType" value="1" title="菜单" checked>
-                <input type="radio" name="menuType" value="2" title="按钮">
+                <input type="radio" name="menuType" value="1" title="菜单" th:checked="${menu.menuType == 1}">
+                <input type="radio" name="menuType" value="2" title="按钮" th:checked="${menu.menuType == 2}">
             </div>
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label">菜单链接</label>
             <div class="layui-input-block">
-                <input type="text" class="layui-input" name="menuUrl" placeholder="请输入菜单链接">
+                <input type="text" class="layui-input" name="menuUrl" th:value="${menu.menuUrl}" placeholder="请输入菜单链接">
             </div>
         </div>
         <div class="layui-form-item">
@@ -73,8 +73,7 @@
 <script type="text/javascript" src="/static/lib/extend/jquery-form/jquery.form.js"></script>
 <script type="text/javascript" src="/static/js/common.js"></script>
 
-
-<script>
+<script th:inline="javascript">
 
     layui.extend({
         iconPicker:'/static/lib/extend/icon-picker/iconPicker'
@@ -92,6 +91,7 @@
             // 数据类型：fontClass/unicode，推荐使用fontClass
             type: 'fontClass',
             fontFamily:"arley-icon", // font family
+            defaultIcon: [[${menu.menuIcon}]], // 默认图标
             data:getIconData(), // 数据
             // 是否开启搜索：true/false
             search: true,
@@ -114,7 +114,7 @@
                 var resultCode = data.resultCode;
                 var resultDesc = data.resultDesc;
                 if ("0000" === resultCode) {
-                    layer.msg('添加成功!', {icon: 1});
+                    layer.msg('修改成功!', {icon: 1});
                     layer_close();
                     parent.treeGrid.reload(parent.tableId);
                 } else {

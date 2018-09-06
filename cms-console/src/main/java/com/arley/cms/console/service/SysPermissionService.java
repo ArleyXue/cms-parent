@@ -1,6 +1,7 @@
 package com.arley.cms.console.service;
 
 import com.arley.cms.console.pojo.Do.SysPermissionDO;
+import com.arley.cms.console.pojo.vo.SysPermissionVO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public interface SysPermissionService extends IService<SysPermissionDO> {
      * @param userId
      * @return
      */
-    List<SysPermissionDO> listHavePermission(Integer userId);
+    List<SysPermissionVO> listHavePermission(Integer userId);
 
     /**
      * 获取用户拥有的权限 层级
@@ -31,5 +32,30 @@ public interface SysPermissionService extends IService<SysPermissionDO> {
      * @param roleId
      * @return
      */
-    List<SysPermissionDO> listPermissionByRoleId(Integer roleId);
+    List<SysPermissionVO> listPermissionByRoleId(Integer roleId);
+
+    /**
+     * 获取菜单
+     * @param permissionId
+     * @return
+     */
+    SysPermissionVO getPermission(Integer permissionId);
+
+    /**
+     * 获取所有菜单列表
+     * @return
+     */
+    List<SysPermissionVO> listPermission();
+
+    /**
+     * 保存菜单
+     * @param sysPermissionVO
+     */
+    void insertPermission(SysPermissionVO sysPermissionVO);
+
+    /**
+     * 修改菜单
+     * @param sysPermissionVO
+     */
+    void updatePermission(SysPermissionVO sysPermissionVO);
 }

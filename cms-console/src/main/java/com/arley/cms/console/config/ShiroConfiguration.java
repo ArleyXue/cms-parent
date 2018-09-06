@@ -3,6 +3,7 @@ package com.arley.cms.console.config;
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 import com.arley.cms.console.shiro.PasswordMatcher;
 import com.arley.cms.console.shiro.ShiroAuthRealm;
+import net.sf.ehcache.CacheManager;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.mgt.SecurityManager;
@@ -16,8 +17,11 @@ import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
+import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -57,28 +61,10 @@ public class ShiroConfiguration {
         return shiroFilterFactoryBean;
     }
 
-    //配置核心安全事务管理器
-    @Bean(name="securityManager")
-    public SecurityManager securityManager(@Qualifier("authRealm") ShiroAuthRealm authRealm, @Qualifier("sessionManager") DefaultWebSessionManager sessionManager, @Qualifier("ehCacheManager") EhCacheManager ehCacheManager) {
-        System.err.println("--------------shiro已经加载----------------");
-        DefaultWebSecurityManager manager=new DefaultWebSecurityManager();
-        manager.setRealm(authRealm);
-        manager.setCacheManager(ehCacheManager);
-        manager.setSessionManager(sessionManager);
-        return manager;
-    }
-    //配置自定义的权限登录器
-    @Bean(name="authRealm")
-    public ShiroAuthRealm authRealm(@Qualifier("credentialsMatcher") CredentialsMatcher matcher) {
-        ShiroAuthRealm authRealm=new ShiroAuthRealm();
-        authRealm.setCredentialsMatcher(matcher);
-        return authRealm;
-    }
-    //配置自定义的密码比较器
-    @Bean(name="credentialsMatcher")
-    public CredentialsMatcher credentialsMatcher() {
-        return new PasswordMatcher();
-    }
+    /**
+     * Shiro生命周期处理器
+     * @return
+     */
     @Bean
     public LifecycleBeanPostProcessor lifecycleBeanPostProcessor(){
         return new LifecycleBeanPostProcessor();
@@ -90,43 +76,116 @@ public class ShiroConfiguration {
         return creator;
     }
     @Bean
-    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(@Qualifier("securityManager") SecurityManager manager) {
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor() {
         AuthorizationAttributeSourceAdvisor advisor=new AuthorizationAttributeSourceAdvisor();
-        advisor.setSecurityManager(manager);
+        advisor.setSecurityManager(securityManager());
         return advisor;
     }
 
+    /**
+     * 缓存管理器 使用Ehcache实现
+     * @return
+     */
+    @Bean(name="shiroEhcacheManager")
+    public EhCacheManager shiroEhcacheManager() {
+        EhCacheManager ehCacheManager = new EhCacheManager();
+        ehCacheManager.setCacheManagerConfigFile("classpath:config/shiro-ehcache.xml");
+        EhCacheManagerFactoryBean ehCacheManagerFactoryBean = new EhCacheManagerFactoryBean();
+        ehCacheManager.setCacheManager(ehCacheManagerFactoryBean.getObject());
+        return ehCacheManager;
+    }
+
+
+
+
+
+    /**
+     * 核心安全事务管理器
+     * @return
+     */
+    @Bean(name="securityManager")
+    public SecurityManager securityManager() {
+        System.err.println("--------------shiro已经加载----------------");
+        DefaultWebSecurityManager manager=new DefaultWebSecurityManager();
+        manager.setRealm(authRealm());
+        manager.setCacheManager(shiroEhcacheManager());
+        manager.setSessionManager(sessionManager());
+        return manager;
+    }
+
+    /**
+     * 自定义的权限登录器
+     * @return
+     */
+    @Bean(name="authRealm")
+    public ShiroAuthRealm authRealm() {
+        ShiroAuthRealm authRealm=new ShiroAuthRealm();
+        authRealm.setCredentialsMatcher(credentialsMatcher());
+        authRealm.setCacheManager(shiroEhcacheManager());
+        // 启用身份验证缓存，即缓存AuthenticationInfo信息，默认false
+        authRealm.setAuthenticationCachingEnabled(false);
+        // 缓存AuthenticationInfo信息的缓存名称
+        authRealm.setAuthenticationCacheName("authenticationCache");
+        // 启用身份验证缓存，即缓存AuthenticationInfo信息，默认false
+        authRealm.setAuthorizationCachingEnabled(false);
+        // 缓存authorizationCache信息的缓存名称
+        authRealm.setAuthorizationCacheName("authorizationCache");
+        return authRealm;
+    }
+
+    /**
+     * 自定义的密码比较器
+     * @return
+     */
+    @Bean(name="credentialsMatcher")
+    public CredentialsMatcher credentialsMatcher() {
+        return new PasswordMatcher();
+    }
+
+    /**
+     * 会话管理器
+     * @return
+     */
     @Bean(name = "sessionManager")
-    public DefaultWebSessionManager sessionManager(@Qualifier("enterpriseCacheSessionDAO") EnterpriseCacheSessionDAO enterpriseCacheSessionDAO) {
+    public DefaultWebSessionManager sessionManager() {
         DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
-        sessionManager.setSessionDAO(enterpriseCacheSessionDAO);
         sessionManager.setGlobalSessionTimeout(1800000);
+        sessionManager.setSessionDAO(sessionDAO());
+        sessionManager.setSessionIdCookie(sessionIdCookie());
+        // 定时检查失效的session
+        sessionManager.setSessionValidationSchedulerEnabled(true);
+        sessionManager.setDeleteInvalidSessions(true);
         sessionManager.setSessionIdCookieEnabled(true);
-        sessionManager.setSessionIdCookie(new SimpleCookie("sid"));
         return sessionManager;
     }
 
-    @Bean(name = "enterpriseCacheSessionDAO")
-    public EnterpriseCacheSessionDAO enterpriseCacheSessionDAO() {
+    /**
+     * 会话DAO 用于会话的CRUD
+     * @return
+     */
+    @Bean(name = "sessionDAO")
+    public EnterpriseCacheSessionDAO sessionDAO() {
         EnterpriseCacheSessionDAO sessionDAO = new EnterpriseCacheSessionDAO();
-        sessionDAO.setActiveSessionsCacheName("shiro-activeSessionCache");
-        sessionDAO.setSessionIdGenerator(new JavaUuidSessionIdGenerator());
+        // Session缓存名字，默认就是shiro-activeSessionCache
+        sessionDAO.setActiveSessionsCacheName("activeSessionCache");
+        sessionDAO.setCacheManager(shiroEhcacheManager());
         return sessionDAO;
+    }
+
+    /**
+     * 会话Cookie模板
+     * @return
+     */
+    @Bean(name = "sessionIdCookie")
+    public SimpleCookie sessionIdCookie() {
+        SimpleCookie simpleCookie = new SimpleCookie("sid");
+        simpleCookie.setHttpOnly(true);
+        simpleCookie.setMaxAge(-1);
+        return simpleCookie;
     }
 
     @Bean
     public ShiroDialect shiroDialect() {
         return new ShiroDialect();
     }
-
-    /**
-     * EhCache 缓存
-     */
-    @Bean(name="ehCacheManager")
-    public EhCacheManager ehCacheManager() {
-        EhCacheManager em = new EhCacheManager();
-        em.setCacheManagerConfigFile("classpath:config/shiro-ehcache.xml");
-        return em;
-    }
-
 }

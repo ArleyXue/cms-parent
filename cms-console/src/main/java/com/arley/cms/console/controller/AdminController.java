@@ -1,12 +1,12 @@
 package com.arley.cms.console.controller;
 
-import com.arley.cms.console.constant.CodeEnum;
+import com.arley.cms.console.constant.PublicCodeEnum;
 import com.arley.cms.console.constant.PublicConstants;
 import com.arley.cms.console.pojo.Do.SysUserDO;
 import com.arley.cms.console.pojo.query.SysUserQuery;
 import com.arley.cms.console.service.SysUserService;
 import com.arley.cms.console.util.AnswerBody;
-import com.arley.cms.console.util.DateUtil;
+import com.arley.cms.console.util.DateUtils;
 import com.arley.cms.console.util.Pagination;
 import com.arley.cms.console.util.ShiroUtils;
 import org.apache.shiro.session.Session;
@@ -35,7 +35,6 @@ public class AdminController {
     private SysUserService sysUserService;
     @Autowired
     private SessionDAO sessionDAO;
-
     /**
      * 分页查询管理员列表
      * @param sysUserQuery
@@ -58,11 +57,11 @@ public class AdminController {
     public AnswerBody updateUserState(Integer userId) {
         SysUserDO sysUser = sysUserService.getById(userId);
         if (Objects.equals(PublicConstants.ADMIN_USER_NAME, sysUser.getUserName())) {
-            return AnswerBody.getInstance(CodeEnum.EDIT_ADMIN);
+            return AnswerBody.buildAnswerBody(PublicCodeEnum.EDIT_ADMIN);
         }
 
         sysUser.setUserState(sysUser.getUserState() == 1 ? 0 : 1);
-        sysUser.setGmtModified(DateUtil.getLocalDateTime());
+        sysUser.setGmtModified(DateUtils.getLocalDateTime());
         sysUser.setModifier(ShiroUtils.getLoginUser().getUserName());
         sysUserService.updateById(sysUser);
 
@@ -78,7 +77,7 @@ public class AdminController {
         }
         Map<String, Integer> result = new HashMap<>();
         result.put("userState", sysUser.getUserState());
-        return AnswerBody.getInstance(result);
+        return AnswerBody.buildAnswerBody(result);
     }
 
 

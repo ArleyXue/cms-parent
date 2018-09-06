@@ -2,7 +2,9 @@ package com.arley.cms.console.util;
 
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.arley.cms.console.constant.CodeEnum;
+import com.arley.cms.console.constant.Code;
+import com.arley.cms.console.constant.PublicCodeEnum;
+
 
 /**
  * @author XueXianlei
@@ -10,13 +12,22 @@ import com.arley.cms.console.constant.CodeEnum;
  * @date Created in 2018/4/8 15:11
  */
 public class AnswerBody {
-    // 返回结果代号
+
+    /**
+     * 返回结果代号
+     */
     @JSONField(ordinal=1)
     private String resultCode;
-    // 返回结果描述
+
+    /**
+     * 返回结果描述
+     */
     @JSONField(ordinal=2)
     private String resultDesc;
-    //返回结果数据
+
+    /**
+     * 返回结果数据
+     */
     @JSONField(ordinal=3)
     private Object resultData;
 
@@ -59,37 +70,42 @@ public class AnswerBody {
                 '}';
     }
 
-    /**
-     * 获得成功code的body
-     * @return
-     */
-    public static AnswerBody getInstance() {
-        return new AnswerBody("0000", "success");
-    }
 
     /**
      * 获得成功code的body
-     * @return
+     * @return AnswerBody
      */
-    public static AnswerBody getInstance(Object data) {
-        AnswerBody body = new AnswerBody("0000", "success");
+    public static AnswerBody buildAnswerBody() {
+        return buildAnswerBody(PublicCodeEnum.SUCCESS);
+    }
+
+    /**
+     * 获得成功code的body 设置data
+     * @param data 数据
+     * @return AnswerBody
+     */
+    public static AnswerBody buildAnswerBody(Object data) {
+        AnswerBody body = buildAnswerBody();
         body.setResultData(data);
         return body;
     }
 
     /**
      * 获得指定错误code的body
-     * @return
+     * @param code code接口
+     * @return AnswerBody
      */
-    public static AnswerBody getInstance(CodeEnum code) {
-        return new AnswerBody(code.getCode(), code.getMsg());
+    public static AnswerBody buildAnswerBody(Code code) {
+        return buildAnswerBody(code.getCode(), code.getMsg());
     }
 
     /**
      * 获得指定code的body
-     * @return
+     * @param resultCode code
+     * @param resultDesc msg
+     * @return AnswerBody
      */
-    public static AnswerBody getInstance(String resultCode, String resultDesc) {
+    public static AnswerBody buildAnswerBody(String resultCode, String resultDesc) {
         return new AnswerBody(resultCode, resultDesc);
     }
 }

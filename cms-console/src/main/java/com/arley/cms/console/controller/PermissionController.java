@@ -1,9 +1,12 @@
 package com.arley.cms.console.controller;
 
-import com.arley.cms.console.pojo.vo.XTreeVO;
 import com.arley.cms.console.pojo.Do.SysPermissionDO;
+import com.arley.cms.console.pojo.vo.SysPermissionVO;
+import com.arley.cms.console.pojo.vo.XTreeVO;
 import com.arley.cms.console.service.SysPermissionService;
-import com.arley.cms.console.util.*;
+import com.arley.cms.console.util.AnswerBody;
+import com.arley.cms.console.util.MenuUtils;
+import com.arley.cms.console.util.Pagination;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -33,49 +36,36 @@ public class PermissionController {
      */
     @RequestMapping(value = "/listPermission.do")
     @ResponseBody
-    public Pagination listAdminByPage() {
-        List<SysPermissionDO> permissionList = sysPermissionService.list(null);
-        Pagination<SysPermissionDO> pagination = new Pagination<>();
-        pagination.setData(permissionList);
-        pagination.setCount(permissionList.size());
+    public Pagination listPermission() {
+        List<SysPermissionVO> sysPermissionVOList = sysPermissionService.listPermission();
+        Pagination<SysPermissionVO> pagination = new Pagination<>();
+        pagination.setData(sysPermissionVOList);
+        pagination.setCount(sysPermissionVOList.size());
         return pagination;
     }
 
     /**
      * 修改菜单
-     * @param sysPermission
+     * @param sysPermissionVO
      * @return
      */
     @RequestMapping(value = "/editPermission.do")
     @ResponseBody
-    public AnswerBody editPermission(SysPermissionDO sysPermission) {
-        SysPermissionDO permission = sysPermissionService.getById(sysPermission.getPermissionId());
-        permission.setMenuName(sysPermission.getMenuName());
-        permission.setMenuCode(sysPermission.getMenuCode());
-        permission.setMenuIcon(sysPermission.getMenuIcon());
-        permission.setMenuPriority(sysPermission.getMenuPriority());
-        permission.setMenuUrl(sysPermission.getMenuUrl());
-        permission.setMenuType(sysPermission.getMenuType());
-        permission.setModifier(ShiroUtils.getLoginUser().getUserName());
-        permission.setGmtModified(DateUtil.getLocalDateTime());
-        sysPermissionService.updateById(permission);
-        return AnswerBody.getInstance();
+    public AnswerBody editPermission(SysPermissionVO sysPermissionVO) {
+        sysPermissionService.updatePermission(sysPermissionVO);
+        return AnswerBody.buildAnswerBody();
     }
 
     /**
      * 添加菜单
-     * @param sysPermission
+     * @param sysPermissionVO
      * @return
      */
     @RequestMapping(value = "/addPermission.do")
     @ResponseBody
-    public AnswerBody addPermission(SysPermissionDO sysPermission) {
-        sysPermission.setModifier(ShiroUtils.getLoginUser().getUserName());
-        sysPermission.setMenuState(1);
-        sysPermission.setGmtCreate(DateUtil.getLocalDateTime());
-        sysPermission.setGmtModified(DateUtil.getLocalDateTime());
-        sysPermissionService.save(sysPermission);
-        return AnswerBody.getInstance();
+    public AnswerBody addPermission(SysPermissionVO sysPermissionVO) {
+        sysPermissionService.insertPermission(sysPermissionVO);
+        return AnswerBody.buildAnswerBody();
     }
 
     /**
@@ -86,24 +76,30 @@ public class PermissionController {
     @RequestMapping(value = "/listXTreePermission.do")
     @ResponseBody
     public Set<XTreeVO> listXTreePermission(Integer roleId) {
-        List<SysPermissionDO> menuList = sysPermissionService.list(new QueryWrapper<SysPermissionDO>().lambda().orderByAsc(SysPermissionDO::getMenuPriority));
-        List<SysPermissionDO> roleMenuList = null;
+        List<SysPermissionVO> menuList = sysPermissionService.listPermission();
+        List<SysPermissionVO> roleMenuList = null;
         if (null != roleId) {
             roleMenuList = sysPermissionService.listPermissionByRoleId(roleId);
         }
-        return MenuUtil.makeXTreeList(menuList, roleMenuList);
+        return MenuUtils.makeXTreeList(menuList, roleMenuList);
     }
 
     /**
      * 前往修改菜单页面
-     * @param parentId
+     * @param permissionId
      * @param model
      * @return
      */
     @RequestMapping(value = "/toPermissionEdit.do")
-    public String toPermissionEdit(Integer parentId, Model model) {
-        SysPermissionDO permission = sysPermissionService.getById(parentId);
-        model.addAttribute("menu", permission);
+    public String toPermissionEdit(Integer permissionId, Model model) {
+        SysPermissionVO sysPermissionVO = sysPermissionService.getPermission(permissionId);
+        String parentMenuName = "(无)";
+        if (null != sysPermissionVO.getParentId()) {
+            SysPermissionVO parentPermissionVo = sysPermissionService.getPermission(sysPermissionVO.getParentId());
+            parentMenuName = parentPermissionVo.getMenuName();
+        }
+        model.addAttribute("menu", sysPermissionVO);
+        model.addAttribute("parentMenuName", parentMenuName);
         return "admin/menuEdit";
     }
 
@@ -115,10 +111,10 @@ public class PermissionController {
      */
     @RequestMapping(value = "/toPermissionAdd.do")
     public String toPermissionAdd(Integer parentId, Model model) {
-        SysPermissionDO permission = new SysPermissionDO();
+        SysPermissionVO permission = new SysPermissionVO();
         permission.setMenuName("(无)");
         if (null != parentId) {
-            permission = sysPermissionService.getById(parentId);
+            permission = sysPermissionService.getPermission(parentId);
         }
         model.addAttribute("permission", permission);
         return "admin/menuAdd";

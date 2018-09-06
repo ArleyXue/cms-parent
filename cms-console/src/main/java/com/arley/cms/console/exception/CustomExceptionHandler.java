@@ -1,6 +1,6 @@
 package com.arley.cms.console.exception;
 
-import com.arley.cms.console.constant.CodeEnum;
+import com.arley.cms.console.constant.PublicCodeEnum;
 import com.arley.cms.console.util.AnswerBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,13 +23,13 @@ public class CustomExceptionHandler {
     public AnswerBody exception(Exception exception){
         logger.error("异常={}", exception.getMessage());
         exception.printStackTrace();
-        return AnswerBody.getInstance(CodeEnum.ERROR.getCode(), CodeEnum.ERROR.getMsg());
+        return AnswerBody.buildAnswerBody(PublicCodeEnum.ERROR.getCode(), PublicCodeEnum.ERROR.getMsg());
     }
 
     @ExceptionHandler(CustomException.class)
     @ResponseBody
     public AnswerBody customException(CustomException exception){
         logger.error("自定义异常={}", exception.getMessage());
-        return AnswerBody.getInstance(exception.getCode(), exception.getMsg());
+        return AnswerBody.buildAnswerBody(exception.getCode(), exception.getMsg());
     }
 }

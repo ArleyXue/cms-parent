@@ -42,12 +42,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserDO> im
         return pagination;
     }
 
-
-    private SysUserVO convertOne(SysUserDO sysUserDO) {
-        SysUserVO vo = new SysUserVO();
-        BeanUtils.copyProperties(sysUserDO, vo);
-       return vo;
-    }
     private List<SysUserVO> convertList(List<SysUserDO> sysUserDOList) {
         List<SysUserVO> sysUserVOList = new ArrayList<>();
         if (sysUserDOList != null && sysUserDOList.size() > 0) {

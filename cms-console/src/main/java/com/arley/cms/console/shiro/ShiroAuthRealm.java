@@ -2,6 +2,7 @@ package com.arley.cms.console.shiro;
 
 import com.arley.cms.console.pojo.Do.SysPermissionDO;
 import com.arley.cms.console.pojo.Do.SysUserDO;
+import com.arley.cms.console.pojo.vo.SysPermissionVO;
 import com.arley.cms.console.service.SysPermissionService;
 import com.arley.cms.console.service.SysUserService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -54,7 +55,7 @@ public class ShiroAuthRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principal) {
         SysUserDO user = (SysUserDO)principal.getPrimaryPrincipal();
         // 获取此用户的所有权限
-        List<SysPermissionDO> sysPermissionList = sysPermissionService.listHavePermission(user.getUserId());
+        List<SysPermissionVO> sysPermissionList = sysPermissionService.listHavePermission(user.getUserId());
         // 遍历组装
         Set<String> permissionSet = new HashSet<>();
         if (sysPermissionList != null && sysPermissionList.size() > 0) {
