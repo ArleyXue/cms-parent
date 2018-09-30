@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <contextName>cms</contextName>
+    <contextName>sz-metro-user</contextName>
     <!--文件夹在当前项目磁盘根目录-->
-    <property name="LOG_PATH" value="D:/data/logs" />
+    <property name="LOG_PATH" value="/data/logs" />
     <!--设置系统日志目录-->
     <property name="APPDIR" value="cms" />
+    <!-- 最大文件个数 -->
+    <property name="log_max_history" value="30" />
 
     <!--  日志记录器，日期滚动记录 ERROR 级别 -->
     <appender name="FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -18,12 +20,13 @@
             而1992-11-06的日志文件在由fileNamePattern指定。%d{yyyy-MM-dd}指定日期格式，%i指定索引 -->
             <fileNamePattern>${LOG_PATH}/${APPDIR}/${APPDIR}-error-%d{yyyy-MM-dd}.log</fileNamePattern>
             <!-- 最多文件数 -->
-            <maxHistory>30</maxHistory>
+            <maxHistory>${log_max_history}</maxHistory>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
             <!-- 除按日志记录之外，还配置了日志文件不能超过10MB，若超过10MB，日志文件会以索引0开始，
             命名日志文件，例如log-error-1992-11-06.0.log -->
-           <!-- <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>10MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>-->
+            <!-- <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                 <maxFileSize>10MB</maxFileSize>
+             </timeBasedFileNamingAndTriggeringPolicy>-->
         </rollingPolicy>
         <!-- 追加方式记录日志 -->
         <append>true</append>
@@ -52,7 +55,8 @@
             而1992-11-06的日志文件在由fileNamePattern指定。%d{yyyy-MM-dd}指定日期格式，%i指定索引 -->
             <fileNamePattern>${LOG_PATH}/${APPDIR}/${APPDIR}-warn-%d{yyyy-MM-dd}.log</fileNamePattern>
             <!-- 最多文件数 -->
-            <maxHistory>30</maxHistory>
+            <maxHistory>${log_max_history}</maxHistory>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
             <!-- 除按日志记录之外，还配置了日志文件不能超过10MB，若超过10MB，日志文件会以索引0开始，
             命名日志文件，例如log-warn-1992-11-06.0.log -->
             <!--<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -86,7 +90,8 @@
             而1992-11-06的日志文件在由fileNamePattern指定。%d{yyyy-MM-dd}指定日期格式，%i指定索引 -->
             <fileNamePattern>${LOG_PATH}/${APPDIR}/${APPDIR}-info-%d{yyyy-MM-dd}.log</fileNamePattern>
             <!-- 最多文件数 -->
-            <maxHistory>30</maxHistory>
+            <maxHistory>${log_max_history}</maxHistory>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
             <!-- 除按日志记录之外，还配置了日志文件不能超过10MB，若超过10MB，日志文件会以索引0开始，
             命名日志文件，例如log-info-1992-11-06.0.log -->
             <!--<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -120,7 +125,8 @@
             而1992-11-06的日志文件在由fileNamePattern指定。%d{yyyy-MM-dd}指定日期格式，%i指定索引 -->
             <fileNamePattern>${LOG_PATH}/${APPDIR}/${APPDIR}-debug-%d{yyyy-MM-dd}.log</fileNamePattern>
             <!-- 最多文件数 -->
-            <maxHistory>30</maxHistory>
+            <maxHistory>${log_max_history}</maxHistory>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
             <!-- 除按日志记录之外，还配置了日志文件不能超过10MB，若超过10MB，日志文件会以索引0开始，
             命名日志文件，例如log-debug-1992-11-06.0.log -->
             <!--<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
@@ -155,10 +161,11 @@
         </filter>
     </appender>
 
+
     <!--  项目 mapper 路径
             console控制台显示sql语句：STDOUT.filter.level -> debug级别
+            <logger name="com.arley.cms.console.mapper" level="DEBUG"></logger>
     -->
-   <!-- <logger name="com.wongh.mapper" level="DEBUG"></logger>-->
 
     <!-- 生产环境下，将此级别配置为适合的级别，以免日志文件太多或影响程序性能 -->
     <root level="INFO">
@@ -168,6 +175,7 @@
         <appender-ref ref="FILE_DEBUG" />
         <!-- 生产环境将请stdout去掉 -->
         <appender-ref ref="STDOUT" />
+
     </root>
 
 </configuration>

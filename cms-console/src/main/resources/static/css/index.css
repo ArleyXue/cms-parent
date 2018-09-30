@@ -1,6 +1,5 @@
-/* 自添加样式*/
-@import "https://at.alicdn.com/t/font_798105_tgs9ubiap8.css";
-.layui-icon{ font-size:16px !important;}
+
+/*.layui-icon{ font-size:16px !important;}*/
 .mag0{ margin:0 !important; }
 ::selection { background: #ff5722; color: #fff; }
 .layui-red{ color:#f00 !important; font-weight:bold;}

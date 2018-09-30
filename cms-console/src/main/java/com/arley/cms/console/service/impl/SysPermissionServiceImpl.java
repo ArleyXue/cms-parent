@@ -4,16 +4,15 @@ import com.arley.cms.console.mapper.SysPermissionMapper;
 import com.arley.cms.console.pojo.Do.SysPermissionDO;
 import com.arley.cms.console.pojo.vo.SysPermissionVO;
 import com.arley.cms.console.service.SysPermissionService;
+import com.arley.cms.console.util.CopyPropertiesUtils;
 import com.arley.cms.console.util.DateUtils;
 import com.arley.cms.console.util.ShiroUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,7 +22,7 @@ import java.util.List;
  */
 @Service("sysPermissionService")
 @Transactional(rollbackFor = Exception.class)
-public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, SysPermissionDO> implements SysPermissionService {
+public class SysPermissionServiceImpl implements SysPermissionService {
 
     @Autowired
     private SysPermissionMapper sysPermissionMapper;
@@ -31,18 +30,19 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
     @Override
     public List<SysPermissionVO> listHavePermission(Integer userId) {
         List<SysPermissionDO> sysPermissionDOList = sysPermissionMapper.listHavePermission(userId);
-        return convertList(sysPermissionDOList);
+        return CopyPropertiesUtils.convertSysPermissionDOToVO(sysPermissionDOList);
     }
 
     @Override
-    public List<SysPermissionDO> listHaveHierarchyPermission(Integer userId) {
-        return sysPermissionMapper.listHaveHierarchyPermission(userId);
+    public List<SysPermissionVO> listHaveHierarchyPermission() {
+        List<SysPermissionDO> sysPermissionDOList = sysPermissionMapper.listHaveHierarchyPermission();
+        return CopyPropertiesUtils.convertSysPermissionDOToVO(sysPermissionDOList);
     }
 
     @Override
     public List<SysPermissionVO> listPermissionByRoleId(Integer roleId) {
         List<SysPermissionDO> sysPermissionDOList = sysPermissionMapper.listPermissionByRoleId(roleId);
-        return convertList(sysPermissionDOList);
+        return CopyPropertiesUtils.convertSysPermissionDOToVO(sysPermissionDOList);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
     @Override
     public List<SysPermissionVO> listPermission() {
         List<SysPermissionDO> sysPermissionDOList = sysPermissionMapper.selectList(new QueryWrapper<SysPermissionDO>().lambda().orderByAsc(SysPermissionDO::getMenuPriority));
-        return convertList(sysPermissionDOList);
+        return CopyPropertiesUtils.convertSysPermissionDOToVO(sysPermissionDOList);
     }
 
     @Override
@@ -83,18 +83,5 @@ public class SysPermissionServiceImpl extends ServiceImpl<SysPermissionMapper, S
         permissionDO.setGmtModified(DateUtils.getLocalDateTime());
         sysPermissionMapper.updateById(permissionDO);
     }
-
-    private List<SysPermissionVO> convertList(List<SysPermissionDO> sysPermissionDOList) {
-        List<SysPermissionVO> sysPermissionVOList = new ArrayList<>();
-        if (sysPermissionDOList != null && sysPermissionDOList.size() > 0) {
-            sysPermissionDOList.forEach(e -> {
-                SysPermissionVO vo = new SysPermissionVO();
-                BeanUtils.copyProperties(e, vo);
-                sysPermissionVOList.add(vo);
-            });
-        }
-        return sysPermissionVOList;
-    }
-
 
 }

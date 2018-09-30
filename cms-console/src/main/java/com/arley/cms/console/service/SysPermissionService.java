@@ -1,8 +1,6 @@
 package com.arley.cms.console.service;
 
-import com.arley.cms.console.pojo.Do.SysPermissionDO;
 import com.arley.cms.console.pojo.vo.SysPermissionVO;
-import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
 
@@ -11,7 +9,7 @@ import java.util.List;
  * @Description:
  * @date 2018/8/16 11:15
  */
-public interface SysPermissionService extends IService<SysPermissionDO> {
+public interface SysPermissionService {
 
     /**
      * 获取用户拥有的权限
@@ -21,11 +19,10 @@ public interface SysPermissionService extends IService<SysPermissionDO> {
     List<SysPermissionVO> listHavePermission(Integer userId);
 
     /**
-     * 获取用户拥有的权限 层级
-     * @param userId
+     * 获取所有的权限 层级
      * @return
      */
-    List<SysPermissionDO> listHaveHierarchyPermission(Integer userId);
+    List<SysPermissionVO> listHaveHierarchyPermission();
 
     /**
      * 根据角色ID查看权限
@@ -58,4 +55,5 @@ public interface SysPermissionService extends IService<SysPermissionDO> {
      * @param sysPermissionVO
      */
     void updatePermission(SysPermissionVO sysPermissionVO);
+
 }

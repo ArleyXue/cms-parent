@@ -1,6 +1,9 @@
 package com.arley.cms.console.util;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author XueXianlei
@@ -8,6 +11,24 @@ import javax.servlet.http.HttpServletRequest;
  * @date 2018/8/16 18:55
  */
 public class RequestUtils {
+
+    /**
+     * 获取请求参数中所有的信息
+     * @param request
+     * @return
+     */
+    public static Map<String, String> getAllRequestParam(HttpServletRequest request) {
+        Map<String, String> res = new LinkedHashMap<String, String>();
+        Enumeration<String> names = request.getParameterNames();
+        if (null != names) {
+            while (names.hasMoreElements()) {
+                String en = names.nextElement();
+                String value = request.getParameter(en);
+                res.put(en, value);
+            }
+        }
+        return res;
+    }
 
     /**
      * 获取客户端IP

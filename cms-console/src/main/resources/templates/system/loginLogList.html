@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>登录日志列表</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="/static/lib/layui/css/layui.css" media="all"/>
+    <link rel="stylesheet" href="/static/css/public.css" media="all"/>
+    <link rel="stylesheet" href="/static/css/list.css" media="all"/>
+</head>
+<body>
+    <div class="childrenBody">
+        <div class="layui-card">
+            <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">用户名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="userName" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button class="layui-btn" lay-submit="" lay-filter="submit-search">
+                            <i class="arley-icon arley-icon-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-card-body">
+
+                <table class="layui-hide" id="tableId" lay-filter="tableFilter"></table>
+
+            </div>
+        </div>
+    </div>
+
+<script type="text/javascript" src="/static/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="/static/lib/layui/layui.js"></script>
+<script type="text/javascript" src="/static/js/common.js"></script>
+<script th:inline="javascript">
+    var type = [[${type}]] === null ? "" : [[${type}]];
+    var url = "/log/listLoginLogByPage.do?type=" + type;
+    var cols = [
+        [
+            {type:'checkbox'},
+            {field:'id', title:'ID', align:'center', sort: true},
+            {field:'userName', title:'用户名', align:'center', sort: true},
+            {field:'loginIp', title:'登录IP', align:'center', sort: true},
+            {field:'loginTime', title:'登录时间', align:'center', sort: true},
+            {field:'content', title:'描述', align:'center', sort: true}
+        ]
+    ];
+
+var tableIns;
+     layui.use(['form','layer','table'],function(){
+         var form = layui.form,
+             table = layui.table;
+
+         tableIns = initTable(url, cols, table, form);
+
+     })
+
+
+
+</script>
+
+</body>
+</html>

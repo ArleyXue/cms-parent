@@ -1,5 +1,8 @@
 package com.arley.cms.console.exception;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author XueXianlei
  * @Description: 自定义异常类
@@ -7,14 +10,22 @@ package com.arley.cms.console.exception;
  */
 public class CustomException extends RuntimeException {
 
+    public static final Integer LOGGER_INFO_TYPE = 1;
+    public static final Integer LOGGER_WARN_TYPE = 2;
+    public static final Integer LOGGER_ERROR_TYPE = 3;
+
     private String code;
 
     private String msg;
 
-    public CustomException(String code, String msg) {
-        super(code + " | " + msg);
+    private Integer type;
+
+    public CustomException(String code, String msg, Integer type) {
+        super(code + " ~ " + msg);
         this.code = code;
         this.msg = msg;
+
+        this.type = type;
     }
 
     public String getCode() {
@@ -31,5 +42,13 @@ public class CustomException extends RuntimeException {
 
     public void setMsg(String msg) {
         this.msg = msg;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 }

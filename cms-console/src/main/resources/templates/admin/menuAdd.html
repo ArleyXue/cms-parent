@@ -10,7 +10,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <link rel="stylesheet" href="/static/lib/layui/css/layui.css" media="all"/>
-    <link rel="stylesheet" href="/static/css/index.css" media="all"/>
     <link rel="stylesheet" href="/static/css/public.css" media="all"/>
 </head>
 <body class="childrenBody">
@@ -68,6 +67,7 @@
             </div>
         </div>
     </form>
+
 <script type="text/javascript" src="/static/js/jquery-3.2.1.min.js"></script>
 <script type="text/javascript" src="/static/lib/layui/layui.js"></script>
 <script type="text/javascript" src="/static/lib/extend/jquery-form/jquery.form.js"></script>
@@ -81,8 +81,7 @@
     })
     layui.use(['form','layer', 'iconPicker'],function(){
         var form = layui.form
-        layer = parent.layer === undefined ? layui.layer : top.layer,
-            $ = layui.jquery;
+        layer = layui.layer;
 
         var iconPicker = layui.iconPicker;
 
@@ -110,6 +109,8 @@
 
         // 表单提交
         form.on("submit(formSubmit)",function(data){
+            // 按钮禁用
+            $("#formSubmit").attr('disabled',true);
             $(data.form).ajaxSubmit(function (data) {
                 var resultCode = data.resultCode;
                 var resultDesc = data.resultDesc;

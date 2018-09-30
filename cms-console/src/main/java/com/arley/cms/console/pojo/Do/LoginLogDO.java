@@ -91,4 +91,5 @@ public class LoginLogDO {
                 ", content='" + content + '\'' +
                 '}';
     }
+
 }

@@ -10,4 +10,8 @@ public class PublicConstants {
      * 超级管理员用户名
      */
     public static final String ADMIN_USER_NAME = "admin";
+    /**
+     * 角色(超级管理员)DI
+     */
+    public static final Integer SUPER_ROLE_ID = 1;
 }

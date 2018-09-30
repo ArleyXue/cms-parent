@@ -1,10 +1,8 @@
 package com.arley.cms.console.service;
 
-import com.arley.cms.console.pojo.Do.SysRoleDO;
 import com.arley.cms.console.pojo.query.SysRoleQuery;
 import com.arley.cms.console.pojo.vo.SysRoleVO;
 import com.arley.cms.console.util.Pagination;
-import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
 
@@ -13,7 +11,7 @@ import java.util.List;
  * @Description:
  * @date 2018/8/16 11:15
  */
-public interface SysRoleService extends IService<SysRoleDO> {
+public interface SysRoleService {
 
     /**
      * 保存角色
@@ -27,7 +25,7 @@ public interface SysRoleService extends IService<SysRoleDO> {
      * @param roleQuery
      * @return
      */
-    Pagination listRoleByPay(SysRoleQuery roleQuery);
+    Pagination listRoleByPage(SysRoleQuery roleQuery);
 
     /**
      * 获取角色
@@ -54,4 +52,11 @@ public interface SysRoleService extends IService<SysRoleDO> {
      * @return
      */
     List<SysRoleVO> listRole();
+
+    /**
+     * 获取管理员拥有的角色
+     * @param userId
+     * @return
+     */
+    SysRoleVO getRoleBySysUserId(Integer userId);
 }

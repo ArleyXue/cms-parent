@@ -10,9 +10,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <link rel="stylesheet" href="/static/lib/layui/css/layui.css" media="all"/>
-    <link rel="stylesheet" href="/static/css/index.css" media="all"/>
     <link rel="stylesheet" href="/static/css/public.css" media="all"/>
     <link rel="stylesheet" href="/static/css/list.css" media="all"/>
+    <link rel="stylesheet" href="/static/lib/extend/lightbox2/css/lightbox.css" media="all">
 </head>
 <body>
 
@@ -21,21 +21,9 @@
             <div class="layui-form layui-card-header layuiadmin-card-header-auto">
                 <div class="layui-form-item">
                     <div class="layui-inline">
-                        <label class="layui-form-label">登录名</label>
+                        <label class="layui-form-label">用户名</label>
                         <div class="layui-input-block">
-                            <input type="text" name="loginname" placeholder="请输入" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">手机</label>
-                        <div class="layui-input-block">
-                            <input type="text" name="telphone" placeholder="请输入" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <label class="layui-form-label">邮箱</label>
-                        <div class="layui-input-block">
-                            <input type="text" name="email" placeholder="请输入" autocomplete="off" class="layui-input">
+                            <input type="text" name="userName" placeholder="请输入用户名" autocomplete="off" class="layui-input">
                         </div>
                     </div>
                     <div class="layui-inline">
@@ -49,10 +37,19 @@
 
             <div class="layui-card-body">
                 <div class="layui-card-operate">
-                    <button class="layui-btn layuiadmin-btn-admin"><i class="arley-icon arley-icon-add"></i> 添加</button>
+                    <button class="layui-btn layui-btn-active" data-type="add"><i class="arley-icon arley-icon-add"></i> 添加</button>
                 </div>
 
                 <table class="layui-hide" id="tableId" lay-filter="tableFilter"></table>
+
+                <!-- 头像显示 -->
+                <script type="text/html" id="avatarId">
+                    {{#  if(d.avatar != null && d.avatar != ''){ }}
+                    <a href="{{d.avatar}}" data-lightbox="image-1" data-title="头像">
+                        <div class="layui-table-cell laytable-cell-1-0-3"><img style="display: inline-block; width: 50%; height: 100%;" src="{{d.avatar}}"> </div>
+                    </a>
+                    {{#  } }}
+                </script>
 
                 <!-- 状态显示 -->
                 <script type="text/html" id="userStateId">
@@ -60,10 +57,9 @@
                 </script>
 
                 <script type="text/html" id="operateId">
-                    <a class="layui-btn {{ d.userName == 'admin' ? 'layui-btn-disabled' : '' }} layui-btn-normal layui-btn-xs"  onclick="member_stop(this, '{{d.userId}}', '{{d.userName}}')"><i class="layui-icon {{d.userState == 1 ? 'layui-icon-download-circle' : 'layui-icon-upload-circle'}}"></i>{{d.userState == 1 ? '禁用' : '启用'}}</a>
-                    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="arley-icon arley-icon-edit"></i>编辑</a>
-                    <a class="layui-btn  layui-btn-xs {{ d.userName == 'admin' ? 'layui-btn-disabled' : 'layui-btn-danger' }} " lay-event="del"><i class="arley-icon arley-icon-delete"></i>删除</a>
-
+                    <a class="layui-btn layui-btn-xs {{ d.userName == 'admin' ? 'layui-btn-disabled' : 'layui-btn-normal' }} " lay-event="stop"><i class="layui-icon {{d.userState == 1 ? 'layui-icon-download-circle' : 'layui-icon-upload-circle'}}"></i>{{d.userState == 1 ? '禁用' : '启用'}}</a>
+                    <a class="layui-btn layui-btn-xs {{ d.userName == 'admin' ? 'layui-btn-disabled' : 'layui-btn-normal' }} " lay-event="edit"><i class="arley-icon arley-icon-edit"></i>编辑</a>
+                    <a class="layui-btn layui-btn-xs {{ d.userName == 'admin' ? 'layui-btn-disabled' : 'layui-btn-danger' }} " lay-event="del"><i class="arley-icon arley-icon-delete"></i>删除</a>
                 </script>
             </div>
         </div>
@@ -72,6 +68,7 @@
 <script type="text/javascript" src="/static/js/jquery-3.2.1.min.js"></script>
 <script type="text/javascript" src="/static/lib/layui/layui.js"></script>
 <script type="text/javascript" src="/static/js/common.js"></script>
+<script type="text/javascript" src="/static/lib/extend/lightbox2/js/lightbox.js"></script>
 <script>
 
      var url = "/admin/listAdminByPage.do";
@@ -83,7 +80,7 @@
              {field:'name',title:'姓名', align:'center'},
              {field:'phone', title:'手机号', align:'center'},
              {field:'email', title:'邮箱', align:'center'},
-             {field:'avatar', title:'头像', align:'center'},
+             {field:'avatar', title:'头像', templet:'#avatarId'},
              {field:'loginNum', title:'登陆次数', align:'center',sort: true},
              {field:'remark', title:'备注', align:'center'},
              {field:'loginTime', title:'上次登陆时间', align:'center',sort: true},
@@ -93,49 +90,91 @@
          ]
      ];
 
-
+     var tableIns;
      layui.use(['form','layer','table'],function(){
          var form = layui.form,
-             $ = layui.jquery,
              table = layui.table;
 
-         initTable(url, cols, table, form);
+         tableIns = initTable(url, cols, table, form);
 
-     })
 
-     /*用户-禁用*/
-     function member_stop(obj, userId, userName){
-         if (userName === 'admin') {
-             return false;
-         }
-         var text = $(obj).parents("tr").find(".td-status").html() === '启用' ? '禁用' : '启用';
-         layer.confirm('确认要'+ text +'吗？',function(index){
-             $.ajax({
-                 url:'/admin/updateUserState.do',
-                 data:{userId:userId},
-                 dataType: 'json',
-                 success:function (data) {
-                     var code = data.resultCode;
-                     var desc = data.resultDesc;
-                     var result = data.resultData;
-                     if ("0000" === code) {
-                         if(result.userState === 1){
-                             //发异步把用户状态进行更改
-                             $(obj).html("<i class='layui-icon layui-icon-download-circle'></i>禁用");
-                             $(obj).parents("tr").find(".td-status").removeClass('layui-btn-disabled').html('启用');
-                             layer.msg('已启用!',{icon: 1,time:1000});
-                         }else{
-                             $(obj).html("<i class='layui-icon layui-icon-upload-circle'></i>启用");
-                             $(obj).parents("tr").find(".td-status").addClass('layui-btn-disabled').html('禁用');
-                             layer.msg('已禁用!',{icon: 1,time:1000});
+         //监听表格操作
+         table.on('tool(tableFilter)', function(obj){
+             var data = obj.data;
+             var event = obj.event;
+             var _this = this;
+             if (data.userName === 'admin') {
+                 return false;
+             }
+             if ('stop' === event) { // 禁用或启用
+                 var text = $(_this).parents("tr").find(".td-status").html() === '启用' ? '禁用' : '启用';
+                 layer.confirm('确认要'+ text +'吗？',function(index){
+                     $.ajax({
+                         url:'/admin/updateUserState.do',
+                         data:{userId:data.userId},
+                         dataType: 'json',
+                         success:function (data) {
+                             var code = data.resultCode;
+                             var desc = data.resultDesc;
+                             var result = data.resultData;
+                             if ("0000" === code) {
+                                 if(result.userState === 1){
+                                     //发异步把用户状态进行更改
+                                     $(_this).html("<i class='layui-icon layui-icon-download-circle'></i>禁用");
+                                     $(_this).parents("tr").find(".td-status").removeClass('layui-btn-disabled').html('启用');
+                                     layer.msg('已启用!',{icon: 1,time:1000});
+                                 }else{
+                                     $(_this).html("<i class='layui-icon layui-icon-upload-circle'></i>启用");
+                                     $(_this).parents("tr").find(".td-status").addClass('layui-btn-disabled').html('禁用');
+                                     layer.msg('已禁用!',{icon: 1,time:1000});
+                                 }
+                             } else {
+                                 layer.msg(desc,{icon: 2,time:1000});
+                             }
                          }
-                     } else {
-                         layer.msg(desc,{icon: 2,time:1000});
-                     }
-                 }
-             })
+                     })
+                 });
+             }else if ('edit' === event) { // 修改
+                 layer_show("修改管理员", "/admin/toAdminEdit.do?userId=" + data.userId + "", '600', '700');
+             } else if ('del' === event) { // 删除
+                 layer.confirm('确认要删除吗？',function(index){
+                     $.ajax({
+                         url:'/admin/deleteAdmin.do',
+                         data:{userId:data.userId},
+                         dataType: 'json',
+                         success:function (data) {
+                             var code = data.resultCode;
+                             var desc = data.resultDesc;
+                             if ("0000" === code) {
+                                 layer.msg('删除成功!', {icon: 1});
+                                 tableIns.reload("reloadTable");
+                             } else {
+                                 layer.msg(desc,{icon: 2,time:1000});
+                             }
+                         }
+                     })
+                 });
+             }
          });
-     }
+
+         // 绑定事件
+         var active = {
+             add:function () {
+                 layer_show("添加管理员", "/admin/toAdminAdd.do", '600', '700')
+             }
+         };
+         $('.layui-btn-active').on('click', function(){
+             var type = $(this).data('type');
+             active[type] ? active[type].call(this) : '';
+         });
+
+
+         function f(date) {
+             alert(date)
+         }
+
+     });
+
 
 </script>
 

@@ -121,14 +121,18 @@ layuiXtree.prototype.dataBind = function (d) {
             var xtree_ischecked = '';
             var xtree_isdisabled = d[i].disabled ? ' disabled="disabled" ' : '';
             _this._domStr += '<div class="layui-xtree-item">';
-            if (d[i].data.length > 0)
+            _this._domStr += '<i class="layui-icon layui-xtree-icon-null">' + _this._iconEnd + '</i>';
+            xtree_isend = 'data-xend="1"';
+            xtree_ischecked = d[i].checked ? ' checked ' : '';
+            xtree_isdisabled = d[i].disabled ? ' disabled="disabled" ' : '';
+            /*if (d[i].data.length > 0)
                 _this._domStr += '<i class="layui-icon layui-xtree-icon" data-xtree="' + (_this._isopen ? '1' : '0') + '">' + (_this._isopen ? _this._iconOpen : _this._iconClose) + '</i>';
             else {
                 _this._domStr += '<i class="layui-icon layui-xtree-icon-null">' + _this._iconEnd + '</i>';
                 xtree_isend = 'data-xend="1"';
                 xtree_ischecked = d[i].checked ? ' checked ' : '';
                 xtree_isdisabled = d[i].disabled ? ' disabled="disabled" ' : '';
-            }
+            }*/
             _this._domStr += '<input type="checkbox" class="layui-xtree-checkbox" ' + xtree_isend + xtree_ischecked + xtree_isdisabled + ' value="' + d[i].value + '" title="' + d[i].title + '" lay-skin="primary" lay-filter="xtreeck' + _this._containerid + '">';
             _this.dataBind(d[i].data);
             _this._domStr += '</div>';

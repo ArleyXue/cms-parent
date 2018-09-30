@@ -22,4 +22,15 @@
         where
           role_id = #{roleId}
     </delete>
+
+    <select id="getRoleBySysUserId" resultType="com.arley.cms.console.pojo.Do.SysRoleDO">
+        SELECT
+            r.role_id,
+            r.role_name
+        FROM
+            sys_user_role ur
+            LEFT JOIN sys_role r ON ur.role_id = r.role_id
+        WHERE
+            ur.user_id = #{userId}
+    </select>
 </mapper>

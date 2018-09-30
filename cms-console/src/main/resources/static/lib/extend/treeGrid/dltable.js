@@ -1308,9 +1308,9 @@ layui.define(['laytpl', 'laypage', 'layer', 'form'], function(exports){
             var iconClose='';//o[table.config.cols.iconClose]?'style="background:url('+o[table.config.cols.iconClose]+') 0 0 no-repeat;"':'';//自定义关闭图标
 
             if(isTreeNode){//父节点
-                temTreeHtml='<i class="layui-icon layui-tree-'+o[options.idField]+' layui-tree-'+ (o[table.config.cols.isOpen] ? "branch" : "leaf") +'" '+iconOpen+'>'+(o[table.config.cols.isOpen]?that.config.branch[0]:that.config.branch[1])+'</i>';
+                // temTreeHtml='<i class="layui-icon layui-tree-'+o[options.idField]+' layui-tree-'+ (o[table.config.cols.isOpen] ? "branch" : "leaf") +'" '+iconOpen+'>'+(o[table.config.cols.isOpen]?that.config.branch[0]:that.config.branch[1])+'</i>';
             }else{//叶子节点
-                temTreeHtml+='<i class="layui-icon layui-tree-'+o[options.idField]+' layui-tree-leaf"  '+iconOpen+'>'+that.config.leaf+'</i>';
+                // temTreeHtml+='<i class="layui-icon layui-tree-'+o[options.idField]+' layui-tree-leaf"  '+iconOpen+'>'+that.config.leaf+'</i>';
             }
             if(isHtml){
                 return temTreeHtml;

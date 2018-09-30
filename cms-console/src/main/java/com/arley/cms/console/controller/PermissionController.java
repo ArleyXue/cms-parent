@@ -29,7 +29,6 @@ public class PermissionController {
     @Autowired
     private SysPermissionService sysPermissionService;
 
-
     /**
      * 获取所有菜单
      * @return
@@ -126,7 +125,7 @@ public class PermissionController {
      */
     @RequestMapping(value = "/toPermissionList.do")
     public String toPermissionList(Model model) {
-        List<SysPermissionDO> menuList = sysPermissionService.list(new QueryWrapper<SysPermissionDO>().lambda().orderByAsc(SysPermissionDO::getMenuPriority));
+        List<SysPermissionVO> menuList = sysPermissionService.listPermission();
         model.addAttribute("menuList", menuList);
         return "admin/menuList";
     }

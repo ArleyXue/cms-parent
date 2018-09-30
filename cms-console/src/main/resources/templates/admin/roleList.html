@@ -10,7 +10,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <link rel="stylesheet" href="/static/lib/layui/css/layui.css" media="all"/>
-    <link rel="stylesheet" href="/static/css/index.css" media="all"/>
     <link rel="stylesheet" href="/static/css/public.css" media="all"/>
     <link rel="stylesheet" href="/static/css/list.css" media="all"/>
 </head>
@@ -60,8 +59,9 @@
 <script type="text/javascript" src="/static/js/jquery-3.2.1.min.js"></script>
 <script type="text/javascript" src="/static/lib/layui/layui.js"></script>
 <script type="text/javascript" src="/static/js/common.js"></script>
-<script >
-
+<script th:inline="javascript">
+    var superRoleId = [[${superRoleId}]];
+    var checkSuperRole = [[${checkSuperRole}]];
     var url = "/role/listRoleByPage.do";
     var cols = [
         [
@@ -78,7 +78,6 @@
 var tableIns;
      layui.use(['form','layer','table'],function(){
          var form = layui.form,
-             //$ = layui.jquery,
              table = layui.table;
 
          tableIns = initTable(url, cols, table, form);
@@ -88,8 +87,16 @@ var tableIns;
              var data = obj.data;
              var event = obj.event
              if ('edit' === event) {
+                 if (data.roleId === superRoleId && !checkSuperRole) {
+                     layer.msg("仅超级管理员用户可操作此记录!",{icon: 2,time:1000});
+                     return;
+                 }
                  layer_show("修改角色", "/role/toRoleEdit.do?roleId=" + data.roleId, '500', '700')
              } else if ('del' === event) {
+                 if (data.roleId === superRoleId && !checkSuperRole) {
+                     layer.msg("仅超级管理员用户可操作此记录!",{icon: 2,time:1000});
+                     return;
+                 }
                  layer.confirm('确认要删除吗？',function(index){
                      $.ajax({
                          url:'/role/deleteRole.do',

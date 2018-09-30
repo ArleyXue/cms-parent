@@ -1,19 +1,23 @@
 package com.arley.cms.console.service.impl;
 
 import com.arley.cms.console.mapper.SysRoleMapper;
+import com.arley.cms.console.mapper.SysUserMapper;
+import com.arley.cms.console.pojo.Do.LoginLogDO;
 import com.arley.cms.console.pojo.Do.SysRoleDO;
 import com.arley.cms.console.pojo.Do.SysRolePermissionDO;
+import com.arley.cms.console.pojo.Do.SysUserRoleDO;
 import com.arley.cms.console.pojo.query.SysRoleQuery;
 import com.arley.cms.console.pojo.vo.SysRoleVO;
 import com.arley.cms.console.service.SysRoleService;
+import com.arley.cms.console.shiro.ShiroAuthRealm;
 import com.arley.cms.console.util.DateUtils;
+import com.arley.cms.console.util.PageUtils;
 import com.arley.cms.console.util.Pagination;
 import com.arley.cms.console.util.ShiroUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +34,14 @@ import java.util.List;
  */
 @Service("sysRoleService")
 @Transactional(rollbackFor = Exception.class)
-public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRoleDO> implements SysRoleService {
+public class SysRoleServiceImpl implements SysRoleService {
 
     @Autowired
     private SysRoleMapper sysRoleMapper;
+    @Autowired
+    private SysUserMapper sysUserMapper;
+    @Autowired
+    private ShiroAuthRealm shiroAuthRealm;
 
 
     @Override
@@ -53,12 +61,20 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRoleDO> im
     }
 
     @Override
-    public Pagination listRoleByPay(SysRoleQuery roleQuery) {
-        LambdaQueryWrapper<SysRoleDO> qw = new QueryWrapper<SysRoleDO>().lambda().orderByAsc(SysRoleDO::getRoleId);
+    public Pagination listRoleByPage(SysRoleQuery roleQuery) {
+        LambdaQueryWrapper<SysRoleDO> qw = new QueryWrapper<SysRoleDO>().lambda();
         if (null != roleQuery.getRoleId()) {
             qw.eq(SysRoleDO::getRoleId, roleQuery.getRoleId());
         }
-        IPage<SysRoleDO> iPage = sysRoleMapper.selectPage(new Page<>(roleQuery.getPage(), roleQuery.getLimit()), qw);
+
+        Page<SysRoleDO> page = new Page<>();
+        // 分页加排序处理
+        if (!PageUtils.pageAndOrderBy(page, roleQuery, SysRoleDO.class)) {
+            // 设置默认排序
+            qw.orderByAsc(SysRoleDO::getRoleId);
+        }
+
+        IPage<SysRoleDO> iPage = sysRoleMapper.selectPage(page, qw);
         Pagination<SysRoleVO> pagination = new Pagination<>();
         pagination.setData(convertList(iPage.getRecords()));
         pagination.setCount(iPage.getTotal());
@@ -91,20 +107,44 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRoleDO> im
         if (rolePermissionList.size() > 0) {
             sysRoleMapper.saveRolePermission(rolePermissionList);
         }
+
+        // 清空shiro缓存
+        shiroAuthRealm.clearCache();
     }
 
     @Override
     public void deleteRoleById(Integer roleId) {
         sysRoleMapper.deleteById(roleId);
 
-        // 角色权限
+        // 删除角色权限
         sysRoleMapper.deleteRolePermissionByRoleId(roleId);
+
+        // 删除用户角色
+        SysUserRoleDO sysUserRoleDO = new SysUserRoleDO();
+        sysUserRoleDO.setRoleId(roleId);
+        sysUserMapper.deleteSysUserRole(sysUserRoleDO);
+
+        // 清空shiro缓存
+        shiroAuthRealm.clearCache();
     }
 
     @Override
     public List<SysRoleVO> listRole() {
-        List<SysRoleDO> sysRoleDOList = sysRoleMapper.selectList(new QueryWrapper<SysRoleDO>().lambda().orderByAsc(SysRoleDO::getRoleId));
+        LambdaQueryWrapper<SysRoleDO> lambda = new QueryWrapper<SysRoleDO>().lambda()
+                .eq(SysRoleDO::getRoleState, 1)
+                .orderByAsc(SysRoleDO::getRoleId);
+        List<SysRoleDO> sysRoleDOList = sysRoleMapper.selectList(lambda);
         return convertList(sysRoleDOList);
+    }
+
+    @Override
+    public SysRoleVO getRoleBySysUserId(Integer userId) {
+        SysRoleDO sysRoleDO = sysRoleMapper.getRoleBySysUserId(userId);
+        SysRoleVO sysRoleVO = new SysRoleVO();
+        if (null != sysRoleDO) {
+            BeanUtils.copyProperties(sysRoleDO, sysRoleVO);
+        }
+        return sysRoleVO;
     }
 
     private List<SysRolePermissionDO> putSysRolePermission(Integer roleId, String permissionIds) {

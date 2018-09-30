@@ -3,8 +3,10 @@ package com.arley.cms.console.config;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.arley.cms.console.interceptor.ApiLogFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
@@ -19,7 +21,39 @@ import java.time.format.DateTimeFormatter;
  * @date 2018/8/16 18:33
  */
 @Configuration
-public class ControllerConfiguration {
+public class WebMvcConfiguration {
+
+
+    /**
+     * 入口过滤器注册
+     * @return
+     */
+    @Bean
+    public FilterRegistrationBean apiLogFilterRegistration() {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setFilter(apiLogFilter());
+        // 拦截路径
+        registration.addUrlPatterns("/*");
+        // 拦截器名称
+        registration.setName("apiLogFilter");
+        // 顺序
+        registration.setOrder(1);
+        // 设置不拦截的路径
+        registration.addInitParameter("excludeUrlPatterns", "/static/**");
+        return registration;
+    }
+
+
+
+    /**
+     * 入口过滤器
+     * @return
+     */
+    @Bean
+    public ApiLogFilter apiLogFilter() {
+        return new ApiLogFilter();
+    }
+
 
     /**
      * 使用fastJson转换json

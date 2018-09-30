@@ -1,4 +1,4 @@
-var iconUrl = "https://at.alicdn.com/t/font_798105_tgs9ubiap8.css";
+var iconUrl = "https://at.alicdn.com/t/font_798105_52cx60ui7zo.css";
 /**
  * layui 初始化分页表格
  * @param url
@@ -16,6 +16,16 @@ function initTable(url, cols, table, form) {
         page : true
     });
 
+    // 排序监听
+    table.on('sort(tableFilter)', function(obj){
+        table.reload('reloadTable', {
+            initSort: obj //记录初始排序，如果不设的话，将无法标记表头的排序状态。 layui 2.1.1 新增参数
+            ,where: { //请求参数（注意：这里面的参数可任意定义，并非下面固定的格式）
+                sortField: obj.field, //排序字段
+                sortOrder: obj.type //排序方式
+            }
+        });
+    });
 
     //监听搜索
     form.on('submit(submit-search)', function(data){

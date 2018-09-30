@@ -21,4 +21,11 @@ public interface SysRoleMapper extends BaseMapper<SysRoleDO> {
      * @param rolePermissionList
      */
     void saveRolePermission(List<SysRolePermissionDO> rolePermissionList);
+
+    /**
+     * 获取管理员拥有的角色
+     * @param userId
+     * @return
+     */
+    SysRoleDO getRoleBySysUserId(Integer userId);
 }

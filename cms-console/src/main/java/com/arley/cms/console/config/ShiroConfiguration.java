@@ -3,12 +3,11 @@ package com.arley.cms.console.config;
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 import com.arley.cms.console.shiro.PasswordMatcher;
 import com.arley.cms.console.shiro.ShiroAuthRealm;
-import net.sf.ehcache.CacheManager;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.cache.ehcache.EhCacheManager;
 import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
-import org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator;
+import org.apache.shiro.session.mgt.eis.MemorySessionDAO;
+import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -16,12 +15,8 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.ehcache.EhCacheCacheManager;
-import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -35,10 +30,11 @@ import java.util.Map;
 public class ShiroConfiguration {
 
     @Bean
-    public ShiroFilterFactoryBean shirFilter(SecurityManager securityManager) {
+    public ShiroFilterFactoryBean shirFilter() {
+
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         // 必须设置 SecurityManager
-        shiroFilterFactoryBean.setSecurityManager(securityManager);
+        shiroFilterFactoryBean.setSecurityManager(securityManager());
         // setLoginUrl 如果不设置值，默认会自动寻找Web工程根目录下的"/login.jsp"页面 或 "/login" 映射
         shiroFilterFactoryBean.setLoginUrl("/user/login.do");
         // 设置无权限时跳转的 url;
@@ -69,9 +65,10 @@ public class ShiroConfiguration {
     public LifecycleBeanPostProcessor lifecycleBeanPostProcessor(){
         return new LifecycleBeanPostProcessor();
     }
+
     @Bean
     public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator(){
-        DefaultAdvisorAutoProxyCreator creator=new DefaultAdvisorAutoProxyCreator();
+        DefaultAdvisorAutoProxyCreator creator = new DefaultAdvisorAutoProxyCreator();
         creator.setProxyTargetClass(true);
         return creator;
     }
@@ -90,14 +87,8 @@ public class ShiroConfiguration {
     public EhCacheManager shiroEhcacheManager() {
         EhCacheManager ehCacheManager = new EhCacheManager();
         ehCacheManager.setCacheManagerConfigFile("classpath:config/shiro-ehcache.xml");
-        EhCacheManagerFactoryBean ehCacheManagerFactoryBean = new EhCacheManagerFactoryBean();
-        ehCacheManager.setCacheManager(ehCacheManagerFactoryBean.getObject());
         return ehCacheManager;
     }
-
-
-
-
 
     /**
      * 核心安全事务管理器
@@ -149,12 +140,15 @@ public class ShiroConfiguration {
     @Bean(name = "sessionManager")
     public DefaultWebSessionManager sessionManager() {
         DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
-        sessionManager.setGlobalSessionTimeout(1800000);
         sessionManager.setSessionDAO(sessionDAO());
-        sessionManager.setSessionIdCookie(sessionIdCookie());
+
+        sessionManager.setGlobalSessionTimeout(1800000);
+        sessionManager.setDeleteInvalidSessions(true);
         // 定时检查失效的session
         sessionManager.setSessionValidationSchedulerEnabled(true);
-        sessionManager.setDeleteInvalidSessions(true);
+        sessionManager.setSessionValidationInterval(1800000);
+        sessionManager.setSessionIdCookie(sessionIdCookie());
+
         sessionManager.setSessionIdCookieEnabled(true);
         return sessionManager;
     }
@@ -164,12 +158,8 @@ public class ShiroConfiguration {
      * @return
      */
     @Bean(name = "sessionDAO")
-    public EnterpriseCacheSessionDAO sessionDAO() {
-        EnterpriseCacheSessionDAO sessionDAO = new EnterpriseCacheSessionDAO();
-        // Session缓存名字，默认就是shiro-activeSessionCache
-        sessionDAO.setActiveSessionsCacheName("activeSessionCache");
-        sessionDAO.setCacheManager(shiroEhcacheManager());
-        return sessionDAO;
+    public SessionDAO sessionDAO() {
+        return new MemorySessionDAO();
     }
 
     /**
@@ -178,7 +168,7 @@ public class ShiroConfiguration {
      */
     @Bean(name = "sessionIdCookie")
     public SimpleCookie sessionIdCookie() {
-        SimpleCookie simpleCookie = new SimpleCookie("sid");
+        SimpleCookie simpleCookie = new SimpleCookie("SHRIOSESSIONID");
         simpleCookie.setHttpOnly(true);
         simpleCookie.setMaxAge(-1);
         return simpleCookie;

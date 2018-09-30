@@ -15,7 +15,7 @@
         <result column="modifier" property="modifier" />
         <result column="gmt_modified" property="gmtModified" />
         <result column="gmt_create" property="gmtCreate" />
-        <collection property="permissionList" column="permissionId=permission_id,userId=user_id" ofType="com.arley.cms.console.pojo.Do.SysPermissionDO" select="listPermissionByParentIdAndUserId">
+        <collection property="permissionList" column="permission_id" ofType="com.arley.cms.console.pojo.Do.SysPermissionDO" select="listPermissionByParentId">
         </collection >
     </resultMap>
 
@@ -47,35 +47,23 @@
             ur.user_id = #{userId}
     </select>
 
-    <select id="listHaveHierarchyPermission" resultMap="BaseResultMap" parameterType="int">
+    <select id="listHaveHierarchyPermission" resultMap="BaseResultMap">
         SELECT
-            <include refid="Base_Column_List"/>,
-            ur.user_id
+            <include refid="Base_Column_List"/>
         from
-            sys_user_role ur
-            LEFT JOIN sys_role r on ur.role_id = r.role_id
-            LEFT JOIN sys_role_permission rp on rp.role_id = r.role_id
-            LEFT JOIN sys_permission p on rp.permission_id = p.permission_id
+            sys_permission p
         WHERE
-            ur.user_id = #{userId}
-        AND
             p.parent_id is null
         order by p.menu_priority
     </select>
 
-    <select id="listPermissionByParentIdAndUserId" resultMap="BaseResultMap">
+    <select id="listPermissionByParentId" resultMap="BaseResultMap">
         SELECT
-           <include refid="Base_Column_List"/>,
-           ur.user_id
+            <include refid="Base_Column_List"/>
         from
-            sys_user_role ur
-            LEFT JOIN sys_role r on ur.role_id = r.role_id
-            LEFT JOIN sys_role_permission rp on rp.role_id = r.role_id
-            LEFT JOIN sys_permission p on rp.permission_id = p.permission_id
+            sys_permission p
         where
             p.parent_id = #{permissionId}
-          AND
-            ur.user_id = #{userId}
         order by p.menu_priority
     </select>
 

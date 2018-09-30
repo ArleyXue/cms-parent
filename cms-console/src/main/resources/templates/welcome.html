@@ -2,7 +2,7 @@
 <html  xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="utf-8">
-	<title>首页--layui后台管理模板 2.0</title>
+	<title>首页</title>
 	<meta name="renderer" content="webkit">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -34,9 +34,9 @@
 				<div class="panel_icon layui-bg-orange">
 					<i class="layui-anim arley-icon arley-icon-groups" data-icon="icon-icon10"></i>
 				</div>
-				<div class="panel_word userAll">
-					<span></span>
-					<em>用户总数</em>
+				<div class="panel_word">
+					<span th:text="${totalCountUser}"></span>
+					<em>在线人数/用户总数</em>
 					<cite class="layui-hide">用户中心</cite>
 				</div>
 			</a>
@@ -209,9 +209,18 @@
 <script th:inline="javascript">
     var userName = [[${userName}]];
     var loginTime = [[${loginTime}]];
-    getLangDate(userName);
-    //上次登录时间
-    $(".loginTime").html(loginTime.replace(' ', '</br>'));
+
+    layui.use(['form','layer'],function(){
+        var form = layui.form,
+            layer = layui.layer;
+
+        getLangDate(userName);
+        //上次登录时间
+        $(".loginTime").html(loginTime.replace(' ', '</br>'));
+
+    })
+
+
 </script>
 </body>
 </html>

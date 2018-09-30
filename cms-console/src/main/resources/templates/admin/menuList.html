@@ -10,7 +10,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
     <link rel="stylesheet" href="/static/lib/layui/css/layui.css" media="all"/>
-    <link rel="stylesheet" href="/static/css/index.css" media="all"/>
     <link rel="stylesheet" href="/static/css/public.css" media="all"/>
     <link rel="stylesheet" href="/static/css/list.css" media="all"/>
 
@@ -28,28 +27,28 @@
     </style>
 </head>
 <body>
-    <div class="childrenBody" style="height: 100%;">
-        <div class="layui-card" style="height: 100%;">
+<div class="childrenBody" style="height: 100%;">
+    <div class="layui-card" style="height: 100%;">
 
-            <div class="layui-card-body" style="height: 100%;">
-                <div class="layui-card-operate">
-                    <button class="layui-btn layui-btn-active" data-type="add"><i class="arley-icon arley-icon-add"></i> 添加</button>
-                </div>
-
-                <table class="layui-hide" id="treeTable" lay-filter="treeTable"></table>
-
-                <!-- 状态显示 -->
-                <script type="text/html" id="roleStateId">
-                    <span class="td-status layui-btn layui-btn-xs {{ d.roleState == 1 ? 'layui-btn-green' : 'layui-btn-disabled' }}">{{ d.roleState == 1 ? '开启' : '关闭' }}</span>
-                </script>
-
-                <script type="text/html" id="operateId">
-                    <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="arley-icon arley-icon-edit"></i>编辑</a>
-                    <a class="layui-btn  layui-btn-xs {{ d.userName == 'admin' ? 'layui-btn-disabled' : 'layui-btn-danger' }} " lay-event="del"><i class="arley-icon arley-icon-delete"></i>删除</a>
-                </script>
+        <div class="layui-card-body" style="height: 100%;">
+            <div class="layui-card-operate">
+                <button class="layui-btn layui-btn-active" data-type="add"><i class="arley-icon arley-icon-add"></i> 添加</button>
             </div>
+
+            <table class="layui-hide" id="treeTable" lay-filter="treeTable"></table>
+
+            <!-- 状态显示 -->
+            <script type="text/html" id="roleStateId">
+                <span class="td-status layui-btn layui-btn-xs {{ d.roleState == 1 ? 'layui-btn-green' : 'layui-btn-disabled' }}">{{ d.roleState == 1 ? '开启' : '关闭' }}</span>
+            </script>
+
+            <script type="text/html" id="operateId">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="arley-icon arley-icon-edit"></i>编辑</a>
+                <a class="layui-btn  layui-btn-xs {{ d.userName == 'admin' ? 'layui-btn-disabled' : 'layui-btn-danger' }} " lay-event="del"><i class="arley-icon arley-icon-delete"></i>删除</a>
+            </script>
         </div>
     </div>
+</div>
 
 <script type="text/javascript" src="/static/js/jquery-3.2.1.min.js"></script>
 <script type="text/javascript" src="/static/lib/layui/layui.js"></script>
@@ -61,9 +60,8 @@
     }).extend({
         treeGrid:'treeGrid'
     }).use(['jquery','treeGrid','layer'], function(){
-        var $=layui.jquery;
         treeGrid = layui.treeGrid;//很重要
-        layer=layui.layer;
+            var layer=layui.layer;
         treeGrid.render({
             id:tableId
             ,elem: '#'+tableId
@@ -82,34 +80,34 @@
                     ,{field:'menuUrl',  title: '菜单链接', align:'center'}
                     ,{field:'menuCode',  title: '菜单标识', align:'center'}
                     ,{field:'menuIcon',  title: '菜单图标', align:'center',
-                        templet: function(d){
-                            return '<i class="arley-icon '+ d.menuIcon +'"></i>';
-                        }
+                    templet: function(d){
+                        return '<i class="arley-icon '+ d.menuIcon +'"></i>';
                     }
+                }
                     ,{field:'menuType',  title: '菜单类型', align:'center' ,
-                        templet: function(d){
-                            var html='';
-                            if (1 === d.menuType) {
-                                html='<a class="layui-btn layui-btn-normal layui-btn-xs" >菜单</a>';
-                            } else {
-                                html='<a class="layui-btn layui-btn-primary layui-btn-xs">按钮</a>';
-                            }
-                            return html;
+                    templet: function(d){
+                        var html='';
+                        if (1 === d.menuType) {
+                            html='<a class="layui-btn layui-btn-normal layui-btn-xs" >菜单</a>';
+                        } else {
+                            html='<a class="layui-btn layui-btn-primary layui-btn-xs">按钮</a>';
                         }
+                        return html;
                     }
+                }
                     ,{field:'menuPriority',  title: '排序', align:'center'}
                     ,{title: '操作', align:'center'/*toolbar: '#barDemo'*/
-                        ,templet: function(d){
-                            var addBtn = '';
-                            var delBtn = '';
-                            addBtn='<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="add"><i class="arley-icon arley-icon-add"></i>添加子菜单</a>';
-                            delBtn='<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="arley-icon arley-icon-edit"></i>编辑</a>';
-                            if (d.menuType === 2) {
-                                addBtn = '';
-                            }
-                            return addBtn+delBtn;
+                    ,templet: function(d){
+                        var addBtn = '';
+                        var delBtn = '';
+                        addBtn='<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="add"><i class="arley-icon arley-icon-add"></i>添加子菜单</a>';
+                        delBtn='<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="arley-icon arley-icon-edit"></i>编辑</a>';
+                        if (d.menuType === 2) {
+                            addBtn = '';
                         }
+                        return addBtn+delBtn;
                     }
+                }
                 ]
             ]
             ,page:false

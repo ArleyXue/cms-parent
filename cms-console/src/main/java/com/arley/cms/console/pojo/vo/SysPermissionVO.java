@@ -1,5 +1,7 @@
 package com.arley.cms.console.pojo.vo;
 
+import java.util.List;
+
 /**
  * @author XueXianlei
  * @Description: 菜单VO
@@ -55,6 +57,8 @@ public class SysPermissionVO {
      * 修改人
      */
     private String modifier;
+
+    private List<SysPermissionVO> permissionList;
 
     public Integer getPermissionId() {
         return permissionId;
@@ -136,7 +140,28 @@ public class SysPermissionVO {
         this.modifier = modifier == null ? null : modifier.trim();
     }
 
+    public List<SysPermissionVO> getPermissionList() {
+        return permissionList;
+    }
 
+    public void setPermissionList(List<SysPermissionVO> permissionList) {
+        this.permissionList = permissionList;
+    }
 
-
+    @Override
+    public String toString() {
+        return "SysPermissionVO{" +
+                "permissionId=" + permissionId +
+                ", menuName='" + menuName + '\'' +
+                ", parentId=" + parentId +
+                ", menuUrl='" + menuUrl + '\'' +
+                ", menuCode='" + menuCode + '\'' +
+                ", menuIcon='" + menuIcon + '\'' +
+                ", menuPriority=" + menuPriority +
+                ", menuState=" + menuState +
+                ", menuType=" + menuType +
+                ", modifier='" + modifier + '\'' +
+                ", permissionList=" + permissionList +
+                '}';
+    }
 }

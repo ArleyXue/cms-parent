@@ -17,18 +17,17 @@ public interface SysPermissionMapper extends BaseMapper<SysPermissionDO> {
     List<SysPermissionDO> listHavePermission(Integer userId);
 
     /**
-     * 获取用户拥有的权限 层级
-     * @param userId
+     * 获取所有权限 层级
      * @return
      */
-    List<SysPermissionDO> listHaveHierarchyPermission(Integer userId);
+    List<SysPermissionDO> listHaveHierarchyPermission();
 
     /**
      * 获取用户拥有的权限 层级
      * @param
      * @return
      */
-    List<SysPermissionDO> listPermissionByParentIdAndUserId();
+    List<SysPermissionDO> listPermissionByParentId();
 
     /**
      * 根据角色ID查看权限

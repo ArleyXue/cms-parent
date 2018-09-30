@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+	  xmlns:shiro="http://www.pollix.at/thymeleaf/shiro" >
 <head>
 	<meta charset="utf-8">
-	<title>layui后台管理模板 2.0</title>
+	<title>CMS</title>
 	<meta name="renderer" content="webkit">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -12,6 +13,7 @@
 	<link rel="icon" href="/static/images/favicon.ico">
 	<link rel="stylesheet" href="/static/lib/layui/css/layui.css" media="all" />
 	<link rel="stylesheet" href="/static/css/index.css" media="all" />
+	<link rel="stylesheet" href="/static/css/public.css" media="all"/>
 
 	<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
 	<!--[if lt IE 9]>
@@ -57,11 +59,12 @@
                         });
                         tpwidget("show");</script>
 					</li>
-					<li class="layui-nav-item" id="userInfo">
-						<a href="javascript:;"><img src="" class="layui-nav-img userAvatar" width="35" height="35"><cite class="adminName" th:text="${user.userName}"></cite></a>
+					<li class="layui-nav-item">
+						<a href="javascript:;"><img th:src="${user.avatar}" class="layui-nav-img userAvatar" width="35" height="35"><cite class="adminName" th:text="${user.userName}"></cite></a>
 						<dl class="layui-nav-child">
-							<dd><a href="javascript:;" data-url="page/user/userInfo.html"><i class="seraph arley-icon arley-icon-personal" data-icon="icon-ziliao"></i><cite>个人资料</cite></a></dd>
-							<dd><a href="javascript:;" id="model"><i class="seraph arley-icon arley-icon-update-password" data-icon="icon-xiugai"></i><cite>修改密码</cite></a></dd>
+							<dd><a href="javascript:;" data-url="/user/toUserInfo.do"><i class="seraph arley-icon arley-icon-personal" data-icon="icon-ziliao"></i><cite>个人资料</cite></a></dd>
+							<dd><a href="javascript:;" id="updatePassword"><i class="seraph arley-icon arley-icon-update-password" data-icon="icon-xiugai"></i><cite>修改密码</cite></a></dd>
+							<dd><a href="javascript:;" data-url="/log/toLoginLogList.do?type=1" ><i class="seraph arley-icon arley-icon-log-login" data-icon="icon-xiugai"></i><cite>登录日志</cite></a></dd>
 							<dd><a href="/user/logout"><i class="seraph arley-icon arley-icon-quit"></i><cite>退出</cite></a></dd>
 						</dl>
 					</li>
@@ -72,10 +75,10 @@
 		<div class="layui-side layui-bg-black">
 			<div class="navBar layui-side-scroll" id="navBar">
 				<ul class="layui-nav layui-nav-tree">
-					<li class="layui-nav-item" th:each="permission1:${permissionList}">
+					<li class="layui-nav-item" th:each="permission1:${permissionList}" shiro:hasPermission="${permission1.menuCode}">
 						<a href="javascript:;"><i class="arley-icon" th:classappend="${permission1.menuIcon}"></i><cite th:text="${permission1.menuName}"></cite></a>
 						<dl class="layui-nav-child">
-							<dd th:each="permission2:${permission1.permissionList}">
+							<dd th:each="permission2:${permission1.permissionList}" shiro:hasPermission="${permission2.menuCode}">
 								<a th:attr="data-url=${permission2.menuUrl}">
 									<i class="arley-icon" th:classappend="${permission2.menuIcon}"></i>
 									<cite th:text="${permission2.menuName}"></cite>
@@ -122,23 +125,32 @@
 	<script type="text/javascript" src="/static/js/jquery-3.2.1.min.js"></script>
 	<script type="text/javascript" src="/static/lib/layui/layui.js"></script>
 	<script type="text/javascript" src="/static/js/index.js"></script>
-	<script type="text/javascript" src="/static/js/cache.js"></script>
+	<script type="text/javascript" src="/static/js/common.js"></script>
 
 <script>
-    //隐藏左侧导航
-    $(".hideMenu").click(function(){
-        if($(".topLevelMenus li.layui-this a").data("url")){
-            layer.msg("此栏目状态下左侧菜单不可展开");  //主要为了避免左侧显示的内容与顶部菜单不匹配
-            return false;
-        }
-        $(".layui-layout-admin").toggleClass("showMenu");
-        if($(this).attr("title") === "展开左侧栏") {
-            $(this).attr("class", "seraph hideMenu arley-icon arley-icon-list_close");
-            $(this).attr("title","收起左侧栏");
-		} else {
-            $(this).attr("class", "seraph hideMenu arley-icon arley-icon-list_open");
-            $(this).attr("title","展开左侧栏");
-		}
+    layui.use(['layer'],function(){
+        var layer = layui.layer;
+
+        //隐藏左侧导航
+        $(".hideMenu").click(function(){
+            if($(".topLevelMenus li.layui-this a").data("url")){
+                layer.msg("此栏目状态下左侧菜单不可展开");  //主要为了避免左侧显示的内容与顶部菜单不匹配
+                return false;
+            }
+            $(".layui-layout-admin").toggleClass("showMenu");
+            if($(this).attr("title") === "展开左侧栏") {
+                $(this).attr("class", "seraph hideMenu arley-icon arley-icon-list_close");
+                $(this).attr("title","收起左侧栏");
+            } else {
+                $(this).attr("class", "seraph hideMenu arley-icon arley-icon-list_open");
+                $(this).attr("title","展开左侧栏");
+            }
+        });
+
+
+        $("#updatePassword").click(function () {
+            layer_show("修改密码", "/user/toPasswordUpdate.do", '500', '400');
+        })
     })
 
 
