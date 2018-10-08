@@ -16,8 +16,6 @@ public class DruidConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(DruidConfiguration.class);
 
-    private static final String DB_PREFIX = "spring.datasource";
-
     @Bean
     public ServletRegistrationBean druidServlet() {
         logger.info("init Druid Servlet Configuration ");
