@@ -151,7 +151,6 @@ public class SysUserServiceImpl implements SysUserService {
 
     @Override
     public void updateUserInfo(SysUserVO sysUserVO) {
-        System.out.println(sysUserVO.getAvatar());
         SysUserVO loginUser = ShiroUtils.getLoginUser();
         SysUserDO sysUserDO = sysUserMapper.selectById(loginUser.getUserId());
         sysUserDO.setAvatar(sysUserVO.getAvatar());

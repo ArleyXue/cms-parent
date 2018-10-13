@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="/static/css/public.css" media="all"/>
 </head>
 <body class="childrenBody">
-    <form class="layui-form" action="/admin/editAdmin.do" method="post">
+    <form class="layui-form" th:action="@{/admin/editAdmin.do}" method="post">
 
         <input type="hidden" name="userId" th:value="${user.userId}">
         <div class="layui-form-item">

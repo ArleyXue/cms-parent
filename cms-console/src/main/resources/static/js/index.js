@@ -1,6 +1,6 @@
 var $,tab,dataStr,layer;
 layui.config({
-	base : "/static/js/"
+	base :  "static/js/"
 }).extend({
 	"bodyTab" : "bodyTab"
 })
@@ -53,7 +53,7 @@ layui.use(['bodyTab','form','element','layer','jquery'],function(){
 
     // 如果没有头像使用默认头像
     if($(".userAvatar").attr("src") == null || $(".userAvatar").attr("src") == '') {
-        $(".userAvatar").attr("src","/static/images/avatar.jpg");
+        $(".userAvatar").attr("src","static/images/avatar.jpg");
     }
 
 	//通过顶部菜单获取左侧二三级菜单   注：此处只做演示之用，实际开发中通过接口传参的方式获取导航数据
@@ -90,21 +90,10 @@ function donation(){
 		area : ['320px', '480px'],
 		tab : [{
 			title : "微信",
-			content : "<div style='padding:30px;overflow:hidden;background:#d2d0d0;'><img width='100%' height='100%' class='code' src='/static/images/money/wechat_charge_code.jpg'></div>"
+			content : "<div style='padding:30px;overflow:hidden;background:#d2d0d0;'><img width='100%' height='100%' class='code' src='static/images/money/wechat_charge_code.jpg'></div>"
 		},{
 			title : "支付宝",
-			content : "<div style='padding:30px;overflow:hidden;background:#d2d0d0;'><img width='100%' height='100%' src='/static/images/money/alipay_charge_code.jpg'></div>"
+			content : "<div style='padding:30px;overflow:hidden;background:#d2d0d0;'><img width='100%' height='100%' src='static/images/money/alipay_charge_code.jpg'></div>"
 		}]
 	})
-}
-
-//图片管理弹窗
-function showImg(){
-    $.getJSON('json/images.json', function(json){
-        var res = json;
-        layer.photos({
-            photos: res,
-            anim: 5
-        });
-    });
 }

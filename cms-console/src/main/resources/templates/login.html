@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="loginHtml">
+<html class="loginHtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <title>CMS</title>
@@ -9,13 +9,13 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
-    <link rel="icon" href="/static/images/favicon.ico">
-    <link rel="stylesheet" href="/static/lib/layui/css/layui.css" media="all" />
-    <link rel="stylesheet" href="/static/css/public.css" media="all" />
+    <link rel="icon" th:href="@{/static/images/favicon.ico}">
+    <link rel="stylesheet" th:href="@{/static/lib/layui/css/layui.css}" media="all" />
+    <link rel="stylesheet" th:href="@{/static/css/public.css}" media="all" />
 </head>
 <body class="loginBody">
-    <form class="layui-form" method="post" action="/user/login.do">
-        <div class="login_face"><img src="/static/images/favicon.ico" class="userAvatar"></div>
+    <form class="layui-form" method="post" th:action="@{/user/login.do}" >
+        <div class="login_face"><img th:src="@{/static/images/favicon.ico}"  class="userAvatar"></div>
         <div class="layui-form-item input-item">
             <label for="userName">用户名</label>
             <input type="text" placeholder="请输入用户名" name="userName" id="userName" class="layui-input" lay-verify="required">
@@ -34,10 +34,10 @@
         </div>
     </form>
 
-    <script type="text/javascript" src="/static/js/jquery-3.2.1.min.js"></script>
-    <script type="text/javascript" src="/static/lib/layui/layui.js"></script>
-<script>
-
+    <script type="text/javascript" th:src="@{/static/js/jquery-3.2.1.min.js}"></script>
+    <script type="text/javascript" th:src="@{/static/lib/layui/layui.js}" ></script>
+<script th:inline="javascript">
+    var contextPath = [[${#servletContext.contextPath}]]
         layui.use(['form','layer','jquery'],function(){
             var form = layui.form,
                 layer = layui.layer;
@@ -58,7 +58,7 @@
                     dataType:'json',
                     success:function(data){
                         if(data.resultCode === "0000"){
-                            location.href="/index.do";
+                            location.href= contextPath + "/index.do";
                         }else{
                             layer.msg(data.resultDesc,{icon: 2});
                             $("#submit").text("登录");

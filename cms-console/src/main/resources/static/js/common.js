@@ -1,4 +1,5 @@
 var iconUrl = "https://at.alicdn.com/t/font_798105_52cx60ui7zo.css";
+
 /**
  * layui 初始化分页表格
  * @param url

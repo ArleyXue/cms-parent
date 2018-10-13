@@ -17,7 +17,7 @@ public class CmsConsoleApplicationTests {
         a.setPage(1);
         SysUserQuery b = new SysUserQuery();
         BeanUtils.copyProperties(b, a);
-        System.out.println(b);
+
     }
 
 }

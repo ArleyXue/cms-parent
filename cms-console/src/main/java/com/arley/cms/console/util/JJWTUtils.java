@@ -21,6 +21,8 @@ import java.util.UUID;
  */
 public class JJWTUtils {
 
+    private static final String key_prefix = "arley";
+
     public static String createJWT(String id, String subject, long ttlMillis, String keyStr) {
         // 指定签名的时候使用的签名算法，也就是header那部分，jjwt已经将这部分内容封装好了。
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
@@ -58,10 +60,9 @@ public class JJWTUtils {
      */
     public static Claims parseJWT(String jwt, String keyStr) {
         SecretKey key = generalKey(keyStr);  //签名秘钥，和生成的签名的秘钥一模一样
-        Claims claims = Jwts.parser()  //得到DefaultJwtParser
+        return Jwts.parser()  //得到DefaultJwtParser
                 .setSigningKey(key)         //设置签名的秘钥
-                .parseClaimsJws(jwt).getBody();//设置需要解析的jwt
-        return claims;
+                .parseClaimsJws(jwt).getBody();
     }
 
     /**
@@ -70,10 +71,9 @@ public class JJWTUtils {
      */
     public static SecretKey generalKey(String stringKey){
         //本地的密码解码[B@152f6e2
-        byte[] encodedKey = Base64.decodeBase64("arley" + stringKey);
+        byte[] encodedKey = Base64.decodeBase64(key_prefix + stringKey);
         // 根据给定的字节数组使用AES加密算法构造一个密钥，使用 encodedKey中的始于且包含 0 到前 leng 个字节这是当然是所有。（后面的文章中马上回推出讲解Java加密和解密的一些算法）
-        SecretKey key = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
-        return key;
+        return new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
     }
 
 

@@ -10,10 +10,10 @@
 	<meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="format-detection" content="telephone=no">
-	<link rel="icon" href="/static/images/favicon.ico">
-	<link rel="stylesheet" href="/static/lib/layui/css/layui.css" media="all" />
-	<link rel="stylesheet" href="/static/css/index.css" media="all" />
-	<link rel="stylesheet" href="/static/css/public.css" media="all"/>
+	<link rel="icon" th:href="@{/static/images/favicon.ico}">
+	<link rel="stylesheet" th:href="@{/static/lib/layui/css/layui.css}" media="all" />
+	<link rel="stylesheet" th:href="@{/static/css/index.css}" media="all" />
+	<link rel="stylesheet" th:href="@{/static/css/public.css}" media="all" />
 
 	<!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
 	<!--[if lt IE 9]>
@@ -62,10 +62,10 @@
 					<li class="layui-nav-item">
 						<a href="javascript:;"><img th:src="${user.avatar}" class="layui-nav-img userAvatar" width="35" height="35"><cite class="adminName" th:text="${user.userName}"></cite></a>
 						<dl class="layui-nav-child">
-							<dd><a href="javascript:;" data-url="/user/toUserInfo.do"><i class="seraph arley-icon arley-icon-personal" data-icon="icon-ziliao"></i><cite>个人资料</cite></a></dd>
+							<dd><a href="javascript:;" th:attr="data-url=@{'/user/toUserInfo.do'}"><i class="seraph arley-icon arley-icon-personal" data-icon="icon-ziliao"></i><cite>个人资料</cite></a></dd>
 							<dd><a href="javascript:;" id="updatePassword"><i class="seraph arley-icon arley-icon-update-password" data-icon="icon-xiugai"></i><cite>修改密码</cite></a></dd>
-							<dd><a href="javascript:;" data-url="/log/toLoginLogList.do?type=1" ><i class="seraph arley-icon arley-icon-log-login" data-icon="icon-xiugai"></i><cite>登录日志</cite></a></dd>
-							<dd><a href="/user/logout"><i class="seraph arley-icon arley-icon-quit"></i><cite>退出</cite></a></dd>
+							<dd><a href="javascript:;" th:attr="data-url=@{'/log/toLoginLogList.do?type=1'}"><i class="seraph arley-icon arley-icon-log-login" data-icon="icon-xiugai"></i><cite>登录日志</cite></a></dd>
+							<dd><a th:href="@{'/user/logout'}"><i class="seraph arley-icon arley-icon-quit"></i><cite>退出</cite></a></dd>
 						</dl>
 					</li>
 				</ul>
@@ -79,7 +79,7 @@
 						<a href="javascript:;"><i class="arley-icon" th:classappend="${permission1.menuIcon}"></i><cite th:text="${permission1.menuName}"></cite></a>
 						<dl class="layui-nav-child">
 							<dd th:each="permission2:${permission1.permissionList}" shiro:hasPermission="${permission2.menuCode}">
-								<a th:attr="data-url=${permission2.menuUrl}">
+								<a th:attr="data-url=@{${permission2.menuUrl}}">
 									<i class="arley-icon" th:classappend="${permission2.menuIcon}"></i>
 									<cite th:text="${permission2.menuName}"></cite>
 								</a>
@@ -107,7 +107,7 @@
 				</ul>
 				<div class="layui-tab-content clildFrame">
 					<div class="layui-tab-item layui-show">
-						<iframe src="/welcome.do"></iframe>
+						<iframe th:src="@{'/welcome.do'}"></iframe>
 					</div>
 				</div>
 			</div>
@@ -122,12 +122,14 @@
 	<div class="site-tree-mobile"><i class="layui-icon">&#xe602;</i></div>
 	<div class="site-mobile-shade"></div>
 
-	<script type="text/javascript" src="/static/js/jquery-3.2.1.min.js"></script>
-	<script type="text/javascript" src="/static/lib/layui/layui.js"></script>
-	<script type="text/javascript" src="/static/js/index.js"></script>
-	<script type="text/javascript" src="/static/js/common.js"></script>
+	<script type="text/javascript" th:src="@{/static/js/jquery-3.2.1.min.js}"></script>
+	<script type="text/javascript" th:src="@{/static/lib/layui/layui.js}" ></script>
+	<script type="text/javascript" th:src="@{/static/js/index.js}" ></script>
+	<script type="text/javascript" th:src="@{/static/js/common.js}" ></script>
 
-<script>
+
+<script th:inline="javascript">
+    var contextPath = [[${#servletContext.contextPath}]];
     layui.use(['layer'],function(){
         var layer = layui.layer;
 
@@ -149,7 +151,7 @@
 
 
         $("#updatePassword").click(function () {
-            layer_show("修改密码", "/user/toPasswordUpdate.do", '500', '400');
+            layer_show("修改密码", contextPath + "/user/toPasswordUpdate.do", '500', '400');
         })
     })
 

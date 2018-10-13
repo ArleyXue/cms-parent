@@ -190,7 +190,7 @@ public class ApiLogFilter extends OncePerRequestFilter {
         public void setStatus(int sc) {
             //禁止设定status，避免重定向到网页
             super.setStatus(sc);
-            // this.status = sc;
+            this.status = sc;
         }
 
         @Override
@@ -201,15 +201,15 @@ public class ApiLogFilter extends OncePerRequestFilter {
         @Override
         public void sendError(int sc) throws IOException {
             //禁止重定向
-            // setStatus(sc);
-            super.sendError(sc);
+            setStatus(sc);
+            // super.sendError(sc);
         }
 
         @Override
         public void sendError(int sc, String msg) throws IOException {
             //禁止重定向
-            // setStatus(sc);
-            super.sendError(sc, msg);
+            setStatus(sc);
+            // super.sendError(sc, msg);
         }
 
         @Override
@@ -230,7 +230,6 @@ public class ApiLogFilter extends OncePerRequestFilter {
         public byte[] getDataStream() {
             return output.toByteArray();
         }
-
 
     }
 

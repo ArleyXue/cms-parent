@@ -42,7 +42,7 @@ layui.use(['form','element','layer','jquery'],function(){
         fillParameter(systemParameter);
     }else{
         $.ajax({
-            url : "/static/json/systemParameter.json",
+            url : "static/json/systemParameter.json",
             type : "get",
             dataType : "json",
             success : function(data){
@@ -70,7 +70,7 @@ layui.use(['form','element','layer','jquery'],function(){
     }
 
     //最新文章列表
-    $.get("/static/json/newsList.json",function(data){
+    $.get("static/json/newsList.json",function(data){
         var hotNewsHtml = '';
         for(var i=0;i<5;i++){
             hotNewsHtml += '<tr>'
