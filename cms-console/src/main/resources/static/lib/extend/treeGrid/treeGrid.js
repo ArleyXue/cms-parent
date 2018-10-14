@@ -6,7 +6,7 @@
 layui.config({
     base: ''
 }).extend({
-    dltable:'/static/lib/extend/treeGrid/dltable'
+    dltable:'../static/lib/extend/treeGrid/dltable'
 }).define(['laytpl', 'laypage','dltable', 'layer', 'form'], function(exports){
     "use strict";
     var $ = layui.jquery;

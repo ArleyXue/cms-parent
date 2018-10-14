@@ -9,8 +9,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
-    <link rel="stylesheet" href="/static/lib/layui/css/layui.css" media="all"/>
-    <link rel="stylesheet" href="/static/css/public.css" media="all"/>
+    <link rel="stylesheet" th:href="@{/static/lib/layui/css/layui.css}" media="all" />
+    <link rel="stylesheet" th:href="@{/static/css/public.css}" media="all" />
 </head>
 <body class="childrenBody">
     <form class="layui-form" action="/permission/addPermission.do" method="post">
@@ -68,19 +68,20 @@
         </div>
     </form>
 
-<script type="text/javascript" src="/static/js/jquery-3.2.1.min.js"></script>
-<script type="text/javascript" src="/static/lib/layui/layui.js"></script>
-<script type="text/javascript" src="/static/lib/extend/jquery-form/jquery.form.js"></script>
-<script type="text/javascript" src="/static/js/common.js"></script>
+    <script type="text/javascript" th:src="@{/static/js/jquery-3.2.1.min.js}"></script>
+    <script type="text/javascript" th:src="@{/static/lib/layui/layui.js}" ></script>
+    <script type="text/javascript" th:src="@{/static/lib/extend/jquery-form/jquery.form.js}" ></script>
+    <script type="text/javascript" th:src="@{/static/js/verify-methods.js}" ></script>
+    <script type="text/javascript" th:src="@{/static/js/common.js}" ></script>
 
-
-<script>
+<script th:inline="javascript">
+    var contextPath = [[${#servletContext.contextPath}]];
 
     layui.extend({
-        iconPicker:'/static/lib/extend/icon-picker/iconPicker'
-    })
+        iconPicker: contextPath + '/static/lib/extend/icon-picker/iconPicker'
+    });
     layui.use(['form','layer', 'iconPicker'],function(){
-        var form = layui.form
+        var form = layui.form,
         layer = layui.layer;
 
         var iconPicker = layui.iconPicker;

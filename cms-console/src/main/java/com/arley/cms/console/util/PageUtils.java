@@ -29,7 +29,7 @@ public class PageUtils {
      * @return
      */
     public static boolean pageAndOrderBy(Page page, PageQuery pageQuery, Class clazz) {
-        page.setPages(pageQuery.getPage()).setSize(page.getSize());
+        page.setCurrent(pageQuery.getPage()).setSize(pageQuery.getLimit());
         if (StringUtils.isBlank(pageQuery.getSortField()) && StringUtils.isBlank(pageQuery.getSortOrder())) {
             return false;
         }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <title>添加角色</title>
@@ -9,11 +9,11 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
-    <link rel="stylesheet" href="/static/lib/layui/css/layui.css" media="all"/>
-    <link rel="stylesheet" href="/static/css/public.css" media="all"/>
+    <link rel="stylesheet" th:href="@{/static/lib/layui/css/layui.css}" media="all" />
+    <link rel="stylesheet" th:href="@{/static/css/public.css}" media="all" />
 </head>
 <body class="childrenBody">
-    <form class="layui-form" action="/role/addRole.do" method="post">
+    <form class="layui-form" th:action="@{/role/addRole.do}" method="post">
         <input type="hidden" value="" id="permissionIds" name="permissionIds">
         <div class="layui-form-item">
             <label class="layui-form-label"><span class="c-red">*</span>角色名称</label>
@@ -49,16 +49,15 @@
         </div>
     </form>
 
-<script type="text/javascript" src="/static/js/jquery-3.2.1.min.js"></script>
-<script type="text/javascript" src="/static/lib/layui/layui.js"></script>
-<script type="text/javascript" src="/static/lib/extend/layui-xtree/layui-xtree.js"></script>
-<script type="text/javascript" src="/static/lib/extend/jquery-form/jquery.form.js"></script>
-<script type="text/javascript" src="/static/js/common.js"></script>
+    <script type="text/javascript" th:src="@{/static/js/jquery-3.2.1.min.js}"></script>
+    <script type="text/javascript" th:src="@{/static/lib/layui/layui.js}" ></script>
+    <script type="text/javascript" th:src="@{/static/lib/extend/jquery-form/jquery.form.js}" ></script>
+    <script type="text/javascript" th:src="@{/static/js/verify-methods.js}" ></script>
+    <script type="text/javascript" th:src="@{/static/js/common.js}" ></script>
+    <script type="text/javascript" th:src="@{/static/lib/extend/layui-xtree/layui-xtree.js}" ></script>
 
-
-<script>
-
-
+<script th:inline="javascript">
+    var contextPath = [[${#servletContext.contextPath}]];
     layui.use(['form','layer'],function(){
         var form = layui.form,
         layer = layui.layer;
@@ -66,7 +65,7 @@
         var xtree = new layuiXtree({
             elem: 'permissionXtree', //(必填) 放置xtree的容器
             form: form, //(必填) layui 的 from
-            data: "/permission/listXTreePermission.do",  //(必填) json数据
+            data: contextPath + "/permission/listXTreePermission.do",  //(必填) json数据
             icon: {
                 end: "" //末尾节点的图标
             }
@@ -93,8 +92,6 @@
             });
             return false;
         })
-
-
 
     })
 

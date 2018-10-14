@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <title>菜单列表</title>
@@ -9,9 +9,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
-    <link rel="stylesheet" href="/static/lib/layui/css/layui.css" media="all"/>
-    <link rel="stylesheet" href="/static/css/public.css" media="all"/>
-    <link rel="stylesheet" href="/static/css/list.css" media="all"/>
+    <link rel="stylesheet" th:href="@{/static/lib/layui/css/layui.css}" media="all" />
+    <link rel="stylesheet" th:href="@{/static/css/public.css}" media="all" />
+    <link rel="stylesheet" th:href="@{/static/css/list.css}" media="all" />
 
     <style>
         html,body{
@@ -50,13 +50,15 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/static/js/jquery-3.2.1.min.js"></script>
-<script type="text/javascript" src="/static/lib/layui/layui.js"></script>
-<script type="text/javascript" src="/static/js/common.js"></script>
-<script>
+<script type="text/javascript" th:src="@{/static/js/jquery-3.2.1.min.js}"></script>
+<script type="text/javascript" th:src="@{/static/lib/layui/layui.js}" ></script>
+<script type="text/javascript" th:src="@{/static/js/common.js}" ></script>
+<script type="text/javascript" th:src="@{/static/js/common.js}" ></script>
+<script th:inline="javascript">
+    var contextPath = [[${#servletContext.contextPath}]];
     var treeGrid=null,tableId='treeTable',layer=null;
     layui.config({
-        base: '/static/lib/extend/treeGrid/'
+        base: contextPath + '/static/lib/extend/treeGrid/'
     }).extend({
         treeGrid:'treeGrid'
     }).use(['jquery','treeGrid','layer'], function(){
@@ -66,7 +68,7 @@
             id:tableId
             ,elem: '#'+tableId
             ,idField:'permissionId'
-            ,url:'/permission/listPermission.do'
+            ,url: contextPath + '/permission/listPermission.do'
             ,cellMinWidth: 100
             ,treeId:'permissionId'//树形id字段名称
             ,treeUpId:'parentId'//树形父id字段名称
@@ -116,16 +118,16 @@
         treeGrid.on('tool('+tableId+')',function (obj) {
             var d = obj.data;
             if(obj.event === 'edit'){//修改
-                layer_show("编辑菜单", "/permission/toPermissionEdit.do?permissionId=" + d.permissionId,  '500', '700')
+                layer_show("编辑菜单", contextPath + "/permission/toPermissionEdit.do?permissionId=" + d.permissionId,  '500', '700')
             }else if(obj.event==="add"){//添加
-                layer_show("添加菜单", "/permission/toPermissionAdd.do?parentId=" + d.permissionId,  '500', '700')
+                layer_show("添加菜单", contextPath + "/permission/toPermissionAdd.do?parentId=" + d.permissionId,  '500', '700')
             }
         });
 
         // 绑定事件
         var active = {
             add:function () {
-                layer_show("添加菜单", "/permission/toPermissionAdd.do", '500', '700')
+                layer_show("添加菜单", contextPath+ "/permission/toPermissionAdd.do", '500', '700')
             }
         };
         $('.layui-btn-active').on('click', function(){
@@ -135,7 +137,6 @@
     });
 
 </script>
-
 
 </body>
 </html>

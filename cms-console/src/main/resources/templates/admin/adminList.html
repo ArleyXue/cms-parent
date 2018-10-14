@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <title>管理员列表</title>
@@ -9,10 +9,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
-    <link rel="stylesheet" href="/static/lib/layui/css/layui.css" media="all"/>
-    <link rel="stylesheet" href="/static/css/public.css" media="all"/>
-    <link rel="stylesheet" href="/static/css/list.css" media="all"/>
-    <link rel="stylesheet" href="/static/lib/extend/lightbox2/css/lightbox.css" media="all">
+    <link rel="stylesheet" th:href="@{/static/lib/layui/css/layui.css}" media="all" />
+    <link rel="stylesheet" th:href="@{/static/css/public.css}" media="all" />
+    <link rel="stylesheet" th:href="@{/static/css/list.css}" media="all" />
+    <link rel="stylesheet" th:href="@{/static/lib/extend/lightbox2/css/lightbox.css}" media="all" />
 </head>
 <body>
 
@@ -64,14 +64,13 @@
             </div>
         </div>
     </div>
-
-<script type="text/javascript" src="/static/js/jquery-3.2.1.min.js"></script>
-<script type="text/javascript" src="/static/lib/layui/layui.js"></script>
-<script type="text/javascript" src="/static/js/common.js"></script>
-<script type="text/javascript" src="/static/lib/extend/lightbox2/js/lightbox.js"></script>
-<script>
-
-     var url = "/admin/listAdminByPage.do";
+    <script type="text/javascript" th:src="@{/static/js/jquery-3.2.1.min.js}"></script>
+    <script type="text/javascript" th:src="@{/static/lib/layui/layui.js}" ></script>
+    <script type="text/javascript" th:src="@{/static/js/common.js}" ></script>
+    <script type="text/javascript" th:src="@{/static/lib/extend/lightbox2/js/lightbox.js}" ></script>
+<script th:inline="javascript">
+    var contextPath = [[${#servletContext.contextPath}]];
+     var url = contextPath + "/admin/listAdminByPage.do";
      var cols = [
          [
              {type:'checkbox', fixed:"left"},
@@ -110,7 +109,7 @@
                  var text = $(_this).parents("tr").find(".td-status").html() === '启用' ? '禁用' : '启用';
                  layer.confirm('确认要'+ text +'吗？',function(index){
                      $.ajax({
-                         url:'/admin/updateUserState.do',
+                         url: contextPath + '/admin/updateUserState.do',
                          data:{userId:data.userId},
                          dataType: 'json',
                          success:function (data) {
@@ -118,7 +117,7 @@
                              var desc = data.resultDesc;
                              var result = data.resultData;
                              if ("0000" === code) {
-                                 if(result.userState === 1){
+                                 if(result.userState === 0){
                                      //发异步把用户状态进行更改
                                      $(_this).html("<i class='layui-icon layui-icon-download-circle'></i>禁用");
                                      $(_this).parents("tr").find(".td-status").removeClass('layui-btn-disabled').html('启用');
@@ -135,11 +134,11 @@
                      })
                  });
              }else if ('edit' === event) { // 修改
-                 layer_show("修改管理员", "/admin/toAdminEdit.do?userId=" + data.userId + "", '600', '700');
+                 layer_show("修改管理员", contextPath + "/admin/toAdminEdit.do?userId=" + data.userId + "", '600', '700');
              } else if ('del' === event) { // 删除
                  layer.confirm('确认要删除吗？',function(index){
                      $.ajax({
-                         url:'/admin/deleteAdmin.do',
+                         url: contextPath + '/admin/deleteAdmin.do',
                          data:{userId:data.userId},
                          dataType: 'json',
                          success:function (data) {
@@ -160,7 +159,7 @@
          // 绑定事件
          var active = {
              add:function () {
-                 layer_show("添加管理员", "/admin/toAdminAdd.do", '600', '700')
+                 layer_show("添加管理员", contextPath + "/admin/toAdminAdd.do", '600', '700')
              }
          };
          $('.layui-btn-active').on('click', function(){
@@ -168,13 +167,7 @@
              active[type] ? active[type].call(this) : '';
          });
 
-
-         function f(date) {
-             alert(date)
-         }
-
      });
-
 
 </script>
 
